@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<beans:beans  xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.1.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+	
+	<!--
+		For disable Spring security 
+	 	1-add attribute security="none" in http tag
+	 	2-delete/comment all child tags of http tag.
+	 -->
+	
+	<!-- 
+		NOTE: Logout Filter will work in case of /logout+POST+csrf protection enabled(http.csrf) OR
+		To change url: <logout logout-url="/mylogout" invalidate-session="true" logout-success-url="/mylogin?logout=true" delete-cookies="JSESSIONID" />
+		To change method to GET from POST, disable csrf protection enabled.
+		
+		NOTE: If Csrf protection is disable then GET request for logout works.
+	
+		http.auto-config=true means {<http>
+									    <form-login />
+									    <http-basic />
+									    <logout />
+									</http>
+								   }	
+		authentication:
+			1-basic done
+			2-digest (to be done)
+			3-remember me 
+			
+	A-Authentication:
+				
+		1-inbuilt form login = {
+		 org.springframework.security.web.authentication.logout.LogoutFilter@476664f5,
+		 org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@6a05387f,
+		 org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@4765bcc,
+		 org.springframework.security.web.authentication.www.BasicAuthenticationFilter@2cddef9f,
+			1- http.auto-config=true
+			2- configured custom logout mapping url : /mylogout
+				<logout logout-url="/mylogout" invalidate-session="true" logout-success-url="/mylogin?logout=true" delete-cookies="JSESSIONID" />
+				this mapping feeds data in LogoutFilter in spring security
+			3- enables CSRF protection
+		} 
+			
+		2-custom form login = {  UsernamePasswordAuthenticationFilter
+			1- http.auto-config=false
+			2- define form login url: /mylogin
+			<form-login login-page="/mylogin" default-target-url="/index" authentication-failure-url="/mylogin?error=true" 
+	    	username-parameter="myusername" password-parameter="mypassword" />
+	    	3- define logout tag if logoutUrl is different from "/logout"
+	    	
+		}
+		
+		3-basic authentication = {
+			1- http.auto-config=false means turn off basic security configuration
+			2- http.entry-point-ref = null ==> No EntryPointRef in http
+			3- http-basic.entry-point-ref="myBasicEntryPoint" 
+				define entry point ref in http-basic tag ==> <http-basic entry-point-ref="myBasicEntryPoint" />
+			4- setup basic entry point 
+			<bean id="myBasicEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+				<property name="realmName" value="Basic Authentication realm for my SpringSecurityDemoApp" />
+			</bean>
+		}
+		
+		4-digest authentication = {
+			1- http.auto-config=false ==> means turn off basic security configuration
+			2- http.entry-point-ref="digestEntryPointBeanId"
+			3- define digest Filter with order in http
+				<http><custom-filter ref="DigestFilterBeanId" position="DIGEST_AUTH_FILTER"/> </http>
+			4- setup Digest Entry Point and Digest Filter
+			<bean id="myDigestFilter" class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
+			  <property name="userDetailsService" ref="inmemoryUserService"/>
+			  <property name="authenticationEntryPoint" ref="myDigestEntryPoint"/>
+			  <property name="userCache" ref="myUserCache"/>
+			</bean>
+			<bean id="myDigestEntryPoint" class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
+			  <property name="realmName" value="Digest Authentication for User Registration"/>
+			  <property name="key" value="acegi"/>
+			  <property name="nonceValiditySeconds" value="120"/>
+			</bean>
+		}	
+		5-RememberMe Authentication: RememberMeAuthenticationFilter:
+			1-disable autoConfig ===> http auto-config="false"
+			2-define remeber-me inside http
+				<remember-me user-service-ref="myUserService" token-validity-seconds="300" remember-me-cookie="rememberMeCookie" key="myRememberMeKey"/>
+			3-custom login form + checkbox remember me with parameter name 'remember-me' 
+		
+		6- session management:
+			1-max concurrent session - DONE
+				ConcurrentSessionControlAuthenticationStrategy:
+					throw exception if number of user session is more than specified number of session.
+			2-channel in session management:-DONE
+			3-host login page on https side -DONE
+			4-redirection http to https OR custom port -DONE ==> http://www.baeldung.com/spring-channel-security-https	
+			5-invalidate old session ??
+			6-redirect to session expired url when session timeout ??
+		    
+			
+	
+	================================Authentication ends here =====================================================	
+		
+	B: Expression-Based Access Control:
+		1-Common Built-In Expressions:
+			hasRole([role])	Returns true if the current principal has the specified role.
+			hasAnyRole([role1,role2])	Returns true if the current principal has any of the supplied roles (given as a comma-separated list of strings)
+			principal	Allows direct access to the principal object representing the current user
+			authentication	Allows direct access to the current Authentication object obtained from the SecurityContext
+			permitAll	Always evaluates to true
+			denyAll	Always evaluates to false
+			isAnonymous()	Returns true if the current principal is an anonymous user
+			isRememberMe()	Returns true if the current principal is a remember-me user
+			isAuthenticated()	Returns true if the user is not anonymous
+			isFullyAuthenticated()	Returns true if the user is not an anonymous or a remember-me user
+		
+		2-Web Security Expressions:
+			<intercept-url pattern="/admin*" access="hasRole('admin')" />
+			
+		3-Method Security Expressions: <global-method-security pre-post-annotations="enabled"/>
+			i)@PreAuthorize,@PostAuthorize,@PreFilter,@PostFilter.
+				spel expression is used in PreAuthorize
+				http.use-expressions attribute to "true". This enables the use of Spring Expression Language.
+		
+	 -->
+	 
+	<!-- <debug /> --> <!-- enable spring security in debug mode -->
+	
+	<http auto-config="false" use-expressions="true" authentication-manager-ref="in-memory-authentication">
+	
+		<!-- Configuring Role Voter bean to use custom access roles, by default roles should be in the form ROLE_{XXX} -->
+		<!-- change requires-channel="http" in maven tomcat instance OR change requires-channel="https" in seperate tomcat instance -->
+		<intercept-url pattern="/admin**" access="hasRole('ROLE_ADMIN')" requires-channel="http"/>
+		<intercept-url pattern="/registration**" access="hasRole('ROLE_ADMIN')" requires-channel="http"/>
+		
+		<!-- <intercept-url pattern="/user" access="hasRole('ROLE_USER')" requires-channel="http"/> -->
+		<intercept-url pattern="/user" access="hasAnyRole('ROLE_USER','ROLE_DEVELOPERS')" requires-channel="http"/>
+		
+		<intercept-url pattern="/allUser**" access="hasRole('ROLE_ADMIN')" requires-channel="http"/>
+		
+		<intercept-url pattern="/registration" access="hasRole('ROLE_SUPER_ADMIN')" requires-channel="http"/>
+		
+		<intercept-url pattern="/index" access="permitAll" requires-channel="any"/>
+		<intercept-url pattern="/403page" access="permitAll" requires-channel="any"/>
+		<intercept-url pattern="/mylogin" access="permitAll" requires-channel="http"/>
+		
+		<!-- <port-mappings>
+			<port-mapping http="8080" https="8443"/>
+		</port-mappings> -->
+		
+		<intercept-url pattern="/mylogout1" access="permitAll" requires-channel="http"/>
+		
+	    <access-denied-handler error-page="/401page" />
+	    
+	    <!-- j_spring_security_logout does not work in spring security 4.1.1 , (it works in spring 3) -->
+	    <!-- NO need of this tag <logout logout-success-url="/index" invalidate-session="true" logout-url="/j_spring_security_logout"/> in spring security context. 
+	    	1-define custom requestMaping and catch request in Controller
+	    	2-Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    			if (auth != null){    
+			        new SecurityContextLogoutHandler().logout(request, response, auth);
+			    }
+	    -->
+	    
+	    <!-- in custom login form ,
+	    	login submit request will work  /login+POST and csrf enabled
+	    	and will processed by filter UsernamePasswordAuthenticationFilter
+	     -->
+	   <form-login login-page="/mylogin" default-target-url="/index" authentication-failure-url="/mylogin?error=true" 
+	    	username-parameter="myusername" password-parameter="mypassword" />
+	    
+	    <!-- enable CSRF protection -->
+	     <csrf />
+	    
+	    <!-- logout works with custom login form -->
+	   <logout logout-url="/mylogout" invalidate-session="true" logout-success-url="/mylogin?logout=true" delete-cookies="JSESSIONID,rememberMe_Cookie1,remember-me" />
+	    
+	    <!-- use any one of them at a time:inside remember-me tag token-repository-ref OR data-source-ref but not a both -->
+	   <!-- <remember-me key="rememberMe_Key1" remember-me-cookie="rememberMe_Cookie1" token-validity-seconds="300" 
+	   	data-source-ref="dataSource" user-service-ref="myUserService"/> -->
+	   <!-- <remember-me key="rememberMe_Key1" remember-me-cookie="rememberMe_Cookie1" token-validity-seconds="300" 
+	   	token-repository-ref="persistentTokenRepo" user-service-ref="myUserService"/> -->
+	    
+	    <!-- ===================Basic/Digest Authentication========================================================= -->
+	    <!-- basic/digest authentication means browser provide own login dialog , but it does not provide logout functionality inbuilt.
+	    	 for logout from app, one needs to close&start web browser or needs to define custom .
+	     -->
+	    <!-- <http-basic entry-point-ref="myBasicEntryPoint" /> -->
+	    <!-- <custom-filter ref="myDigestFilter"  position="DIGEST_AUTH_FILTER"/> -->
+	    <!-- ===================Basic/Digest Authentication========================================================= -->
+	    
+	    <!-- session management will process by ConcurrentSessionFilter -->
+	    <custom-filter position="CONCURRENT_SESSION_FILTER" ref="myConcurrentSessionFilter" />
+	    
+	    <session-management session-authentication-strategy-ref="myCompositeSessionAuthenticationStrategies" 
+	    	invalid-session-url="/invalidSessionUrl" />
+	   	
+	</http>
+	
+	<!-- in memory database configuration START here Authentication1 -->
+	<authentication-manager id="in-memory-authentication">
+	  <authentication-provider>
+	   <user-service id="inmemoryUserService">
+	   		<user name="root" password="123456" authorities="ROLE_SUPER_ADMIN,ROLE_ADMIN,ROLE_USER" />
+	   		<user name="yash" password="123456" authorities="ROLE_ADMIN,ROLE_USER" />
+			<user name="chahar" password="123456" authorities="ROLE_USER" />
+	    </user-service>
+	  </authentication-provider>
+	</authentication-manager>
+	<!-- in memory database configuration END here -->
+	
+	<!-- Select users and user_roles from external database Authentication2 using jdbc-user-service -->
+	<authentication-manager id="external-db-dataSource-authentication">
+	  <authentication-provider>
+	     <password-encoder ref="myPasswordEncoderService"/>
+		 <jdbc-user-service data-source-ref="dataSource"
+		  users-by-username-query="select user_name,password,enabled from app_users where user_name=?"
+		  authorities-by-username-query="select user_name,role_name from app_users_app_roles where user_name =?  " /> 
+	  </authentication-provider>
+	</authentication-manager>
+	
+	<!-- Select users and user_roles from external database Authentication2 using authentication-provider -->
+	<authentication-manager id="external-db-userService-authentication">
+	  <authentication-provider user-service-ref="myUserService">
+	  	<password-encoder ref="myPasswordEncoderService"/>
+	  </authentication-provider>
+	</authentication-manager>
+	
+	<authentication-manager id="external-db-by-authentication-manager">
+	  <authentication-provider ref="myCustomAuthenticationProvider" />
+	</authentication-manager>
+	
+	<authentication-manager id="embedded-ldap-authentication-mamanger">
+        <ldap-authentication-provider user-dn-pattern="uid={0},ou=people" role-prefix="ROLE_" >
+        	<password-compare hash="md5">
+        		<password-encoder hash="md5" />
+        	</password-compare>
+        </ldap-authentication-provider>
+    </authentication-manager>
+    
+	 <ldap-server root="dc=springframework,dc=org" ldif="classpath:ldap_user_details.ldif" />
+	
+</beans:beans>	

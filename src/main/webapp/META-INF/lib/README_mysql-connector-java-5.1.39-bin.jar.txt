@@ -1,0 +1,1 @@
+download mysql-connector-java-5.1.39-bin.jar from maven repository.

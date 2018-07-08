@@ -1,0 +1,4 @@
+installed server for https.
+security.xml is updated for redirect http->https
+	specified list of url served at http
+	other secured list of url served at https.

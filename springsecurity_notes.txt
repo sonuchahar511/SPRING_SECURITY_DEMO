@@ -1,0 +1,211 @@
+https://docs.spring.io/spring-security/site/docs/3.0.x/reference/ns-config.html#ns-session-mgmt
+
+<intercept-url pattern="/admin**" access="hasRole('ROLE_ADMIN')" requires-channel="http"/>
+<intercept-url pattern="/user" access="hasAnyRole('ROLE_USER','ROLE_DEVELOPERS')" requires-channel="http"/>
+<intercept-url pattern="/allUser**" access="hasRole('ROLE_ADMIN')" requires-channel="http"/>
+<intercept-url pattern="/registration" access="hasRole('ROLE_SUPER_ADMIN')" requires-channel="http"/>
+
+<intercept-url pattern="/index" access="permitAll" requires-channel="any"/>
+
+<intercept-url pattern="/403page" access="permitAll" requires-channel="any"/>
+<intercept-url pattern="/mylogin" access="permitAll" requires-channel="http"/>
+<intercept-url pattern="/mylogout1" access="permitAll" requires-channel="http"/>
+
+==========================================================================================================================
+1- Inbuilt form + In memory Authentication:
+
+	<http auto-config="true" authentication-manager-ref="in-memory-authentication">
+		//above configurion for (url+role+channel+access)  			
+	</http>
+	
+--------------------------------------------------------------------------------------------------------------
+2- Custom login form + In memory Authentication:
+
+	<http auto-config="false" authentication-manager-ref="in-memory-authentication">
+		//above configurion for (url+role+channel+access)
+		
+		<form-login login-page="/mylogin" default-target-url="/index" authentication-failure-url="/mylogin?error=true" 
+	    	username-parameter="myusername" password-parameter="mypassword" />  			
+	</http>
+--------------------------------------------------------------------------------------------------------------
+3- datasource authentication+ password encoding by password-encoder:
+
+	<http auto-config="false" authentication-manager-ref="external-db-dataSource-authentication">
+	</http>
+	
+	<authentication-manager id="external-db-dataSource-authentication">
+	  <authentication-provider>
+	     <password-encoder ref="myPasswordEncoderService"/> ====> stores encoded password instead of plain text password.
+		 <jdbc-user-service data-source-ref="dataSource"
+		  users-by-username-query="select username,password,enabled from users where username=? "
+		  authorities-by-username-query="select username,rolename from user_roles where username =?  " /> 
+	  </authentication-provider>
+	</authentication-manager>
+
+------------------------------------------------------------------------------------------------------------------------
+4- userservice instead of datasource + password encoding by password-encoder:
+
+	<http auto-config="false" authentication-manager-ref="external-db-userService-authentication">
+	</http>
+	<authentication-manager id="external-db-userService-authentication">
+	  <authentication-provider user-service-ref="myUserService">
+	  	<password-encoder ref="myPasswordEncoderService"/>
+	  </authentication-provider>
+	</authentication-manager>
+--------------------------------------------------------------------------------------------------------------------------
+5- custom db authentication provider + password encoding by password-encoder:
+
+	<http auto-config="false" authentication-manager-ref="external-db-by-authentication-manager">
+	</http>
+	<authentication-manager id="external-db-by-authentication-manager">
+	  <authentication-provider ref="myCustomAuthenticationProvider" />
+	</authentication-manager>
+	<bean id="myCustomAuthenticationProvider" class="com.chahar.service.impl.CustomAuthenticationProvider">
+		<property name="userService" ref="myUserService"/>
+		<property name="passwordEncoderService" ref="myPasswordEncoderService"/>
+	</bean>
+-----------------------------------------------------------------------------------------------------------------------------
+6- Redirect secure page http->https 
+
+	<http auto-config="false" authentication-manager-ref="external-db-by-authentication-manager">
+		<intercept-url pattern="/admin**" access="hasRole('ROLE_ADMIN')" requires-channel="https"/>
+		<intercept-url pattern="/user" access="hasAnyRole('ROLE_USER','ROLE_DEVELOPERS')" requires-channel="https"/>
+		<port-mappings>
+			<port-mapping http="8080" https="8443"/>
+		</port-mappings>
+	</http>
+Note:  /admin is protected page which requires https.
+once you logged in https and then you can access all pages which requires login as their access role.
+if any page is protected(which requirs login) then again it will ask for login because earliar user is loggedin at https site.
+
+-----------------------------------------------------------------------------------------------------------------------------
+ 7 - define custom access denied page:
+ 
+	 <http auto-config="false" use-expressions="true" authentication-manager-ref="in-memory-authentication">
+	 	<access-denied-handler error-page="/accessDenied_401page.jsp" />
+	 </http>
+
+Question: Difference between Http method code 401 vs 403 ?
+https://stackoverflow.com/questions/3297048/403-forbidden-vs-401-unauthorized-http-responses
+	
+401: Unauthorized"(Bad Credentials) : 
+	you aren’t authenticated–either not authenticated at all or authenticated incorrectly–but please reauthenticate and try again
+	
+403: for authorization I use the 403 Forbidden response. It’s permanent, it’s tied to my application logic, and it’s a more concrete response than a 401.
+Receiving a 403 response is the server telling you, “I’m sorry. I know who you are–I believe who you say you are–but you just don’t have permission to access this resource. 
+	Maybe if you ask the system administrator nicely, you’ll get permission. But please don’t bother me again until your predicament changes.”
+	
+In summary, a 401 Unauthorized response should be used for missing or bad authentication, 
+and a 403 Forbidden response should be used afterwards, when the user is authenticated but isn’t authorized to perform the requested operation on the given resource.
+
+-------------------------------------------------------------------------------------------------------------------------------
+8- custom jsp for invalid url (No page found):
+	
+	setup in web.xml file:
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/pages/404_pageNotFoundPage.jsp</location>
+	</error-page>
+-------------------------------------------------------------------------------------------------------------------------------
+9- feed data into User/Role/Privileges from intial_data.sql(present in resource folder)
+	
+hbm2ddl.auto=create (on every tomcat server startup, it will drop + create new ALL Tables).
+ 	Change to update(from create) on 2nd times and onwards.  
+	
+	<bean id="myHibernate4SessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.chahar.entity.User</value>
+				<value>com.chahar.entity.Role</value>
+				<value>com.chahar.entity.Priviledge</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${db.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show.sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hbm2ddl.auto}</prop>
+				<prop key="hibernate.hbm2ddl.import_files">initial_data.sql,initial_tables_setup.sql</prop>
+				<prop key="hibernate.hbm2ddl.import_files_sql_extractor">org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor</prop>
+			</props>
+		</property>
+	</bean>
+	
+	hibernate.hbm2ddl.import_files ==> will fetch given SQL file. Create table statement are generally multiLine statement.
+	To Accept multiLine SQL statement ===> hibernate.hbm2ddl.import_files_sql_extractor=org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
+	
+-------------------------------------------------------------------------------------------------------------------
+10 - custom logout url:
+
+	Controller should have method  /mylogout + POST . 
+	<http auto-config="false" authentication-manager-ref="external-db-by-authentication-manager">
+		<logout logout-url="/mylogout" invalidate-session="true" logout-success-url="/mylogin?logout=true" delete-cookies="JSESSIONID,rememberMe_Cookie1,remember-me" />
+	</http>
+
+	j_spring_security_logout does not work in spring security 4.1.1 , (it works in spring 3) -->
+	NO need of this tag <logout logout-success-url="/index" invalidate-session="true" logout-url="/j_spring_security_logout"/> in spring security context. 
+	1-define custom requestMaping and catch request in Controller
+	2-Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null){    
+	        new SecurityContextLogoutHandler().logout(request, response, auth);
+	    }
+
+-----------------------------------------------------------------------------------------------------------------------
+11- Filter execution flow:
+----------------------------------------------------------------------------------------------------------------------- 
+12- Basic Authentication: most unsecured authentication
+	NOTE: After successful authorization, browser send Request header "Authorization:Basic cm9vdDoxMjM0NTY=" in every request to server.
+	1- create custom mapping in Controller.mappingMethod return 401 code; On this 401 code , browser does not send above data in request header.
+	Browser doesn't know when not to send basic authentication in header in web request.
+	
+	Note: Basic authentication DOES NOT WORK with custom login form.
+	
+	Note: Basic authentication entry is sufficient to setup basic authentication Filter.
+	
+A)	<http auto-config="false" authentication-manager-ref="external-db-by-authentication-manager">
+		<http-basic />
+	</http>
+
+B)	<http auto-config="false" entry-point-ref="myBasicEntryPoint" authentication-manager-ref="external-db-by-authentication-manager">
+	    <custom-filter ref="myBasicFilter" after="BASIC_AUTH_FILTER" />
+	</http>
+	
+	NOTE: 1)if used <http-basic> then BasicAuthenticationFilter will be used.
+	2) <http-basic> + <custom-filter ref="myBasicFilter" after="BASIC_AUTH_FILTER" /> then
+		BasicAuthenticationFilter + customBasicAuthenticationFilter both filter will be used. - IT SHOULD NOT HAPPEN. 
+		solution: <custom-filter ref="myBasicFilter" after="BASIC_AUTH_FILTER" /> it will use customBasicAUthenticationFilter by replacing existing AuthenticationFilter. 
+		
+	<bean id="myBasicEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+		<property name="realmName" value="Basic Authentication realm for my SpringSecurityDemoApp" />
+	</bean>
+	<bean id="myBasicFilter" class="com.chahar.web.filter.MyBasicAuthenticationFilter">
+		 <constructor-arg name="authenticationManager" ref="external-db-by-authentication-manager" />
+		 <constructor-arg name="authenticationEntryPoint" ref="myBasicEntryPoint" />
+	</bean>
+-----------------------------------------------------------------------------------------------------------------------
+13- Digest Authentication:
+		<http auto-config="false" entry-point-ref="myDigestEntryPoint">
+			<custom-filter ref="myDigestFilter" position="DIGEST_AUTH_FILTER" />
+		</http>
+		Note: No need to use authentication manager because myDigestFilter uses userService.
+		Right now , default DigestAuthenticationFilter uses plain password.
+		To use encoded password , override logic in custom DigestAuthenticationFilter.
+		
+Authorization:Digest username="pal", realm="Digest Authentication realm for my SpringSecurityDemoApp", nonce="MTUwNzkxOTMyMzg3NzozYTgyZDU3ZmZkYjMzNzc2YTVhZjI3NDc0MzJkMDY5Zg==", uri="/securitydemo/user", response="50e5ad0a33e675d55ada90322f525ccd", qop=auth, nc=00000001, cnonce="c68bbe7746c2596a"
+-----------------------------------------------------------------------------------------------------------------------
+14- Concurrent Session management:
+
+	1- When session cookie is changed/tempored ==> invalidSessionUrl
+	2- When session expired ==> sessionExpired
+
+-------------------------------------------------------------------------------------------------------------------
+15- port redirect 8080 -> 8443 
+
+CHANNELPROCESSINGFILTER is responsible to redirect when chanhes http->https
+	ChannelDecisionManagerImpl
+	SecureChannelProcessor
+	RetryWithHttpEntryPoint
+	RetryWithHttpsEntryPoint
+--------------------------------------------------------------------------------------------------------------------
+	

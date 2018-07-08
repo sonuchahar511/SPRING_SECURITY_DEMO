@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<beans:beans  xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.1.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+	
+	<http auto-config="false" authentication-manager-ref="in-memory-authentication">
+	
+		<intercept-url pattern="/admin**" access="hasRole('ROLE_ADMIN')" requires-channel="http"/>
+		<intercept-url pattern="/user" access="hasAnyRole('ROLE_USER','ROLE_DEVELOPERS')" requires-channel="http"/>
+		<intercept-url pattern="/allUser**" access="hasRole('ROLE_ADMIN')" requires-channel="http"/>
+		<intercept-url pattern="/registration" access="hasRole('ROLE_SUPER_ADMIN')" requires-channel="http"/>
+		
+		<intercept-url pattern="/index" access="permitAll" requires-channel="any"/>
+		
+		<intercept-url pattern="/403page" access="permitAll" requires-channel="any"/>
+		<intercept-url pattern="/mylogin" access="permitAll" requires-channel="http"/>
+		<intercept-url pattern="/mylogout1" access="permitAll" requires-channel="http"/>
+		
+		<form-login login-page="/mylogin" default-target-url="/index" authentication-failure-url="/mylogin?error=true" 
+	    	username-parameter="myusername" password-parameter="mypassword" />
+	    <logout logout-url="/mylogout" invalidate-session="true" logout-success-url="/mylogin?logout=true" delete-cookies="JSESSIONID,rememberMe_Cookie1,remember-me" />
+	    
+	</http>
+	
+	<!-- in memory database configuration START here  -->
+	<authentication-manager id="in-memory-authentication">
+		  <authentication-provider>
+			   <user-service id="inmemoryUserService">
+			   		<user name="root" password="123456" authorities="ROLE_SUPER_ADMIN,ROLE_ADMIN,ROLE_USER" />
+			   		<user name="yash" password="123456" authorities="ROLE_ADMIN,ROLE_USER" />
+					<user name="chahar" password="123456" authorities="ROLE_USER" />
+			    </user-service>
+		  </authentication-provider>
+	</authentication-manager>
+	<!-- in memory database configuration END here -->
+	
+</beans:beans>	
