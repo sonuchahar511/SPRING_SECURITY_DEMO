@@ -208,4 +208,37 @@ CHANNELPROCESSINGFILTER is responsible to redirect when chanhes http->https
 	RetryWithHttpEntryPoint
 	RetryWithHttpsEntryPoint
 --------------------------------------------------------------------------------------------------------------------
-	
+C:\hybris-6.2.0.11\hybris\bin\ext-template\ycommercewebservices
+
+HybrisOAuthTokenStore  -> platform\ext\oauth2\bin\oauth2server.jar
+JdbcTokenStore -> platform\ext\oauth2\lib\spring-security-oauth2-2.0.9.RELEASE.jar
+=================================================================================================================
+{FDC8ED3E888AF46B62667F7A7138CE49=org.springframework.security.core.session.SessionInformation@fb4d227}
+
+{User [username=root, enabled=true,isAccountNonExpired=true,isAccountNonLocked=true,isCredentialsNonExpiredtrue]=[FDC8ED3E888AF46B62667F7A7138CE49]}
+
+
+org.springframework.security.core.session.SessionRegistryImpl@13b7831a
+=====================================================================================
+{A8AE005EAC96909D4E2E7850CAF4F60C=org.springframework.security.core.session.SessionInformation@5c0b34af, 
+FDC8ED3E888AF46B62667F7A7138CE49=org.springframework.security.core.session.SessionInformation@fb4d227}
+
+{User [username=root, enabled=true,isAccountNonExpired=true,isAccountNonLocked=true,isCredentialsNonExpiredtrue]=[FDC8ED3E888AF46B62667F7A7138CE49, A8AE005EAC96909D4E2E7850CAF4F60C]}
+
+chahar
+JSESSIONID=43F09D25FA8340DC87AD840C3D2D031F
+
+org.apache.catalina.session.PersistentManager[/securitydemo]
+[StandardSession[88C6F7DFB2DE0AF39226FFCC4BE3197B]]
+88C6F7DFB2DE0AF39226FFCC4BE3197B
+========================================================================================
+org.springframework.security.web.session.HttpSessionEventPublisher
+org.apache.catalina.session.PersistentManager.backgroundProcess - [/securitydemo]
+ContainerBase$ContainerBackgroundProcessor.run
+	org.springframework.security.web.session.HttpSessionDestroyedEvent[source=org.apache.catalina.session.StandardSessionFacade@658e8939]
+
+SessionRegistryImpl listen for SessionDestroyedEvent.
+org.springframework.web.context.support.XmlWebApplicationContext
+Note:HttpSessionEventPublisher create & publish HttpSessionDestroyedEvent which SessionRegistryImpl(Listener) listens HttpSessionDestroyedEvent/SessionDestroyedEvent.
+org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent
+---------------------------	
