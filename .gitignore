@@ -1,7 +1,9 @@
+.idea/
+
 target/
 build-tools/
 
-deployed
+deployed/apache-tomcat-7.0.77
+deployed/tomcat-7.0.77.zip
 
-.idea
 

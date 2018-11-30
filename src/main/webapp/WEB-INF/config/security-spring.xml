@@ -55,7 +55,7 @@
 				</bean>
 				<bean class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
 					<constructor-arg name="sessionRegistry" ref="mySessionRegistry" index="0"/>
-					<property name="maximumSessions" value="1" />
+					<property name="maximumSessions" value="2" />
 					<property name="exceptionIfMaximumExceeded" value="true" />
 				</bean>
 				<!-- <bean class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy" /> -->

@@ -27,8 +27,10 @@
 	    
 	    <custom-filter position="CONCURRENT_SESSION_FILTER" ref="myConcurrentSessionFilter" />
 	    <custom-filter position="FORM_LOGIN_FILTER" ref="myUsernamePasswordAuthFilter" />
+	    
 	    <session-management session-authentication-strategy-ref="myCompositeSessionAuthenticationStrategies"
 	    	 invalid-session-url="/invalidSessionUrl" />
+	    	 
 		<logout delete-cookies="JSESSIONID" />	    
 	</http>
 	<authentication-manager id="external-db-by-authentication-manager">

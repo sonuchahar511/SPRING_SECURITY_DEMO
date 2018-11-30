@@ -1,0 +1,168 @@
+Spring Security
+================================================================
+http://docs.spring.io/spring-security/site/docs/3.2.6.RELEASE/reference/htmlsingle/#new
+spring security vs spring framework version compatibility
+spring framework=3.2.8.RELEASE
+spring security=3.2.6.RELEASE
+================================================================
+1-Getting up and running Spring security
+	What is spring security(Authorization=HttpRequest Level/Method level/permission level)
+	setup spring security(
+		<servlet>
+			<servlet-name>MySpringSecurityDemoApp</servlet-name>
+			<servlet-class>org.springframework.web.servlet.DispatherServlet</servlet-class>
+			<init-param>
+				<param-name>contextConfigLocation</param-name>
+				<param-value>/WEB-INF/config/springSecurityConfig.xml</param-value>
+			</init-param>
+		</servlet>
+		<servlet-mapping>
+			<servlet-name>MySpringSecurityDemoApp</servlet-name>
+			<url-pattern>/</url-pattern>
+		</servlet-mapping>
+	)
+	setting security filter(
+		<filter>
+			<filter-name>springSecurityFilterChain</filter-name>
+			<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		</filter>
+	)
+	create application context xml for spring security(
+		define security config file as application context in web.xml -DONE
+		add security namespace in security config file - done
+	)
+	using spring security in memory authentication(inMemory-done/database-done/LDAP/Open ID)
+		- imMemory,external database - DONE
+	using http basic authentication - DONE
+2-Spring security and database authentication - done
+	  
+3-Spring security database tables - done (Bcrypt)
+	<security:authentication-provider>
+		<security:password-encoder hash="bcyrpt" />
+	</security:authentication-provider>
+	
+	Q: Instead of storing password as plain text, you want to hash them with Bcrypt.Which authentication method shoud used to allow this.
+	Ans: Using authentication information form external database.
+	
+4-Using spring security Jsp tag
+	Getting familiar with spring security jsp tag
+					org.springframework.security/spring-security-taglibs/3.2.5.RELEASE
+					<% taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+					tags are authorize,authentication,accesscontrollist,csrfInput,csrfMetaTags
+					ex: <sec:authentication property="name" />
+						<sec:authorize ifAnyGranted="ROLE_ADMIN"> <a href="addFood">Add food to list</a> </sec:authorize>
+	using authentication tag
+	using authorization tag
+5-Customizing spring security
+	provide custom login page(
+		<security:form-login login-page="/login" default-target-url="/home" authentication-failure-url="">
+		
+		<form action="j_spring_security_check" name="myForm" method="POST">
+			Username: <input type="text" name="j_username" />
+			Password: <input type="password" name="j_password" />
+			<input type="submit" name="submit" value="Get Started" />
+		</form>
+	)
+	provide custom login page through controller
+	indicate authenticate error message on custom login page(
+		Authentiocation error: <security:form-login login-page="/login" authentication-failure-url=".." />
+		Authorization error: <security:access-denied-handler errorpage="" />
+	)
+	adding logout functionality through spring security(
+		<security:logout logout-success-url="/logout" />
+	)
+6-Access control using expression
+	understand access control using expression
+	secure url with expression(
+	
+		<security:http auto-config="true">
+			<security:intercept-url pattern="/logout" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			<security:intercept-url pattern="/login" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			<security:intercept-url pattern="/**" access="ROLE_USER" />
+		</security:http>	
+	
+		<security:http auto-config="true" use-expression="true">
+			<security:intercept-url pattern="/logout" access="permitAll" />
+			<security:intercept-url pattern="/login" access="permitAll" />
+			<security:intercept-url pattern="/loginFaild" access="permitAll" /> (Controller process loginFaild url and redirect to login page)
+			<security:intercept-url pattern="/**" access="ROLE_USER" />
+		</security:http>	
+	)
+	perform method level security with expression(
+		in controller class : 
+		
+		@PreAuthorize("hasRole('ROLE_ADMIN')")
+		@RequestMapping(value="/addFood",method=RequestMethod.GET,params="id")
+		private String addFood(@RequestParam("id") int id ,Model model){
+		}
+		
+		by xml configuration:
+		<security:http auto-config="true" use-expression="true">
+		  <security:intercept-url pattern="/addFood" access="hasRole('ROLE_ADMIN')"/>	
+	)
+Note: Expression evalution is true/false
+Questions:
+Q1:You have configured spring security to provide custom login page that is routed from spring mvc controller.you want to configure spring security to provide default logout functionality. what step are needed for this ? 
+Ans: 1-create jsp page that user is taken to after logging out.
+	 2-add handler to controller to process logout url.
+	 3-add logout tag with attribute logout-success-url to security namespace.
+	 4-Setup intercept url to allow anonymous access to logout url.
+	 5-add logout link that is set to j_spring_security_logout
+
+Q2:You have configured spring security to provide custom login page that is routed from spring mvc controller.you want to display custom error message if authentication failed. what step are needed for this ?
+Ans: 1-allow authentication error message to be accessed anonymously.
+	 2-add authentication-failure-url attribute to form-login tag.
+	 3-create conditional statement that controls when authentication error message is displayed.
+	 4-setup handler method in controller to process authention failure url.
+
+Q3- What step are required to provice cusom login page with spring security?
+Ans: 1-define the custom login page with login form.
+	 2-setup form-login tag with custom login page file name
+	 3-Setup intercept url to allow anonymous user to access custom login page.
+	 
+Q4: You want to use spring security to secure an application based on database authentication records.You have already created bean for data source and data access object. write code for this.
+Ans:  <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+			<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+			<property name="url" value="jdbc:mysql://localhost:3306/securitydemodb"/>
+			<property name="username" value="root"/>
+			<property name="password" value="root"/>
+	  </bean>
+	  <bean id="myUserDetailService" class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl">
+		<property name="dataSource" ref="dataSource"/>
+	  </bean>
+	  
+	  any one of below 
+	  i) <security:authentication-manager>
+			<security:authentication-provider user-service-ref="myUserDetailService"/>
+		</security:authentication-manager>	
+		OR
+	  ii) <security:authentication-manager>
+			<security:authentication-provider data-service-ref="dataSource"/>
+		 </security:authentication-manager>
+	
+Q5-How to configure spring security to work with MD5 encrypted database password?
+Ans: 1-create class that use instance of MD5PasswordEncoder class
+	 2-stored encypted password in database
+	 3-call function that perform hash and pass password as string
+	 4-setup password encoder in security application context with hash of MD5
+
+Q6- What is recommended way of encrypting before storing password in database 
+Ans: BCrypt
+
+Q7- How to configre spring security to work with Bcrypt encrypted database passwords?
+Ans: 1-Setup password encoder with security application context with hash of Bcrypt
+	 2-Call function that perform hash and pass password as string
+	 3-create class that use instance of BcryptPasswordEncoder class
+
+Q8- Match tag
+	authorize - It use tag attribute to determine whether content is shown.
+    accesscontrollist-it use permission of domain object to determine whether content is shown
+    csrfMetaTags -It makes it easier to employ CSRF protection in javascript of applications
+	csrfInput -It include hidden form field which contains name and value for protection token
+
+Q9- You want to use express to allow only user with role ROLE_ADMIN authority able to access addFood page.
+Ans:   <security:http auto-config="true" use-expression="true">
+		  <security:intercept-url pattern="/addFood" access="hasRole('ROLE_ADMIN')"/>
+
+
+

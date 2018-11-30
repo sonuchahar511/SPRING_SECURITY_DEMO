@@ -2,7 +2,8 @@
 
 <!-- apache-ant-1.9.1 -->
 
-<project>
+<project default="start_tomcatserver">
+	
 	<property file="build.properties"/>
 	
 	<property name="name" value="securitydemo" />
