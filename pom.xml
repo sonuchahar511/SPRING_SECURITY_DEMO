@@ -29,7 +29,8 @@
     </properties>
  
      <dependencies>
-     	
+
+		 <!-- dependency for downloading tomcat zip -->
      	<dependency>
 		    <groupId>org.apache.tomcat</groupId>
 		    <artifactId>tomcat</artifactId>

@@ -1,6 +1,8 @@
+-- mysql script for data setup
+CREATE DATABASE securitydemo;
 
 ##########RememberMe token saved in persistent_logins table by JdbcTokenRepositoryImpl
-CREATE TABLE persistent_logins(
+CREATE TABLE persistent_logins (
   `username` varchar(64) NOT NULL,
   `series` varchar(64) NOT NULL,
   `token` varchar(64) NOT NULL,

@@ -46,7 +46,6 @@ LdapAuthenticationProviderConfigurer<B>.PasswordCompareConfigurer
 
 LdapAuthenticationProviderConfigurer.this.passwordAttribute = "userPassword"
 
-
 Using default security password: bb4c9e50-5405-465f-8b76-014bae8c86f1
 org.springframework.security.ldap.authentication.PasswordComparisonAuthenticator
 

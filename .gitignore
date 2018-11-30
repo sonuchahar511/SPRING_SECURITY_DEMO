@@ -1,2 +1,7 @@
 target/
 build-tools/
+
+deployed
+
+.idea
+
