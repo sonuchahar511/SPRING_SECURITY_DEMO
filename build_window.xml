@@ -32,9 +32,9 @@
 	</target>
 	
 	<target name="stop_tomcatserver" depends="check_tomcatserver_dir_check" if="dir.tomcatserver.exists">
-		<exec dir="${TOMCAT_HOME}/bin" executable="bin/sh" >
-			<arg value="-c"/>
-			<arg value="catalina.sh stop"/>
+		<exec dir="${TOMCAT_HOME}/bin" executable="cmd" >
+			<arg value="/C"/>
+			<arg value="catalina.bat stop"/>
 		</exec>
 		<sleep seconds="2" /> <!-- Give time to tomcat for shutdown gracefully/properly -->
 	</target>
@@ -48,20 +48,20 @@
 	</target>
 	
 	<target name="all">
-		<exec dir="." executable="bash" >
-			<arg value="-c"/>
+		<exec dir="." executable="cmd" >
+			<arg value="/C"/>
 			<arg value="mvn clean install"/>
 		</exec>
 	</target>
 	
-	<target name="setup_tomcatserver" depends="check_tomcatserver_dir_check" if="dir.tomcatserver.notexists">
+	<target name="setup_tomcatserver" if="dir.tomcatserver.notexists">
 		<property name="tomcat.zip.name" value="tomcat-7.0.77.zip" />
 
 		<echo message="FIX ME: this task should execute once while setup project first time. work=downloaded+extract zip " />
 		<copy file="${user.home}/.m2/repository/org/apache/tomcat/tomcat/${tomcat.version}/${tomcat.zip.name}" todir="${deploy.root.dir}" overwrite="true" verbose="true" />
 		<unzip src="deployed/${tomcat.zip.name}" dest="./${deploy.root.dir}" />
 		
-		<sleep seconds="15" />
+		<sleep seconds="5" />
 		<delete file="deployed/${tomcat.zip.name}" verbose="true" />
 
 	</target>
@@ -96,14 +96,9 @@
 	</target>
 	
 	<target name="serverstart" depends="prepare_tomcatserver" >
-		<!--<exec dir="${TOMCAT_HOME}/bin" executable="bash" >
-			<arg value="-c"/>
-			<arg value="chmod u+x catalina.sh"/>
-		</exec>-->
-		<exec dir="${TOMCAT_HOME}/bin" executable="bash" >
-			<arg value="-c"/>
-			<!--<arg value="./catalina.sh jpda start"/>-->
-			<arg value="./catalina.sh run"/>
+		<exec dir="${TOMCAT_HOME}/bin" executable="cmd" >
+			<arg value="/C"/>
+			<arg value="catalina.bat jpda start"/>
 		</exec>
 	</target>
 
