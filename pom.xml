@@ -1,313 +1,344 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-4.0.0.xsd"
-  	 xmlns="http://maven.apache.org/POM/4.0.0"
-  	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <groupId>com.chahar</groupId>
-  <artifactId>SecurityDemo</artifactId>
-  <packaging>war</packaging>
-  <version>0.0.1-SNAPSHOT</version>
-  
-  <name>SecurityDemo Maven Webapp</name>
-  <url>http://maven.apache.org</url>
-  
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.chahar</groupId>
+    <artifactId>SecurityDemo</artifactId>
+    <packaging>war</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>SecurityDemo Maven Webapp</name>
+
+
     <properties>
-	  <spring.version>4.3.1.RELEASE</spring.version>
-	  <spring.security.version>4.1.1.RELEASE</spring.security.version>
-	  
-	  <jstl.version>1.2</jstl.version>
-	  
-	  <maven.compiler.source>1.8</maven.compiler.source>
-	  <maven.compiler.target>1.8</maven.compiler.target>
-	  
-	  <mysql.connector.version>5.1.30</mysql.connector.version>
-	  <hibernate.version>4.3.6.Final</hibernate.version>
-	  
-	  <apache.ds.ldap.server.version>1.5.5</apache.ds.ldap.server.version>
-	  <apache.common.dhcp.version>1.4</apache.common.dhcp.version>
-	  <javax.servlet.api.version>3.1.0</javax.servlet.api.version>
-	  <javax.jsp.api.version>2.3.1</javax.jsp.api.version>
-	  
+        <spring.version>4.3.21.RELEASE</spring.version>
+        <spring.security.version>4.2.10.RELEASE</spring.security.version>
+
+        <jstl.version>1.2</jstl.version>
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+        <mysql.connector.version>5.1.30</mysql.connector.version>
+        <hibernate.version>4.3.6.Final</hibernate.version>
+
+        <apache.ds.ldap.server.version>1.5.5</apache.ds.ldap.server.version>
+        <apache.common.dhcp.version>1.4</apache.common.dhcp.version>
+        <javax.servlet.api.version>3.1.0</javax.servlet.api.version>
+        <javax.jsp.api.version>2.3.1</javax.jsp.api.version>
+
+        <securitydemo.log4j2.version>2.1</securitydemo.log4j2.version>
+        <securitydemo.slf4j-api.version>1.7.12</securitydemo.slf4j-api.version>
+        <securitydemo.commons-logging.version>1.2</securitydemo.commons-logging.version>
     </properties>
- 
-     <dependencies>
 
-		 <!-- dependency for downloading tomcat zip -->
-     	<dependency>
-		    <groupId>org.apache.tomcat</groupId>
-		    <artifactId>tomcat</artifactId>
-		    <version>7.0.77</version>
-		    <type>zip</type>
-		</dependency>
-     	
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
+    <dependencies>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
+        <!-- dependency for downloading tomcat zip -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat</artifactId>
+            <version>7.0.77</version>
+            <type>zip</type>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-beans</artifactId>
-		    <version>${spring.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-context</artifactId>
-		    <version>${spring.version}</version>
-		</dependency>
-		
-		<!-- Spring Security -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<version>${spring.security.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>${spring.security.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-taglibs</artifactId>
-			<version>${spring.security.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-expression</artifactId>
-		    <version>${spring.security.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
-		<!-- jstl for jsp page -->
-		<dependency>
-			<groupId>jstl</groupId>
-			<artifactId>jstl</artifactId>
-			<version>${jstl.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${javax.servlet.api.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>javax.servlet.jsp-api</artifactId>
-			<version>${javax.jsp.api.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.connector.version}</version>
-		</dependency>
-		<!-- Apache Commons DBCP -->
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>${apache.common.dhcp.version}</version>
-		</dependency>
-		<!-- Hibernate -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <!-- Spring Security -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+
+
+        <!-- jstl for jsp page -->
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax.servlet.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>javax.servlet.jsp-api</artifactId>
+            <version>${javax.jsp.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.connector.version}</version>
+        </dependency>
+        <!-- Apache Commons DBCP -->
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${apache.common.dhcp.version}</version>
+        </dependency>
+        <!-- Hibernate -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-orm</artifactId>
-		    <version>${spring.version}</version>
-		</dependency>
-		
-		<!-- =================================================================================================================== -->
-		<!-- LDAP spring security dependency -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-ldap</artifactId>
-			<version>${spring.security.version}</version>
-		</dependency>
-		
-           <!-- below working -->
-           <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
-		  <dependency>
-			    <groupId>org.slf4j</groupId>
-			    <artifactId>slf4j-log4j12</artifactId>
-			    <version>1.7.21</version>
-			</dependency>
-		<!-- ===================================================================================================================== -->
-		
-		<!-- dependencies for embedded apache ds LDAP server -->
-		<dependency>
-			<groupId>org.apache.directory.server</groupId>
-			<artifactId>apacheds-core</artifactId>
-			<version>${apache.ds.ldap.server.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.directory.server</groupId>
-			<artifactId>apacheds-server-jndi</artifactId>
-			<version>${apache.ds.ldap.server.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <!-- =================================================================================================================== -->
+        <!-- LDAP spring security dependency -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+
+        <!-- below working -->
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
+        <!--<dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.21</version>
+        </dependency>-->
+
+        <!-- Log4j2 dependencies starts here -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${securitydemo.log4j2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${securitydemo.log4j2.version}</version>
+        </dependency>
+        <!-- Log4j2 dependencies ends here -->
+
+        <!-- dependencies for common logging used in spring -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${securitydemo.commons-logging.version}</version>
+        </dependency>
+
+        <!-- bridge common logging to log4j2 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jcl</artifactId>
+            <version>${securitydemo.log4j2.version}</version>
+        </dependency>
+        <!-- ===================================================================================================================== -->
+
+        <!-- dependencies for embedded apache ds LDAP server -->
+        <dependency>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-core</artifactId>
+            <version>${apache.ds.ldap.server.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.directory.server</groupId>
+            <artifactId>apacheds-server-jndi</artifactId>
+            <version>${apache.ds.ldap.server.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
     </dependencies>
-  
-     <build>
-     	<finalName>securitydemo</finalName>
+
+    <build>
+        <finalName>securitydemo</finalName>
         <pluginManagement>
             <plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
-					<configuration>
-						<source>${maven.compiler.source}</source>
-						<target>${maven.compiler.target}</target>
-					</configuration>
-				</plugin>
-	
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-eclipse-plugin</artifactId>
-					<version>2.9</version>
-					<configuration>
-						<downloadSources>true</downloadSources>
-						<downloadJavadocs>true</downloadJavadocs>
-						<wtpversion>2.0</wtpversion>
-					</configuration>
-				</plugin>
-				<!-- <plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-        			<artifactId>maven-dependency-plugin</artifactId>
-        			<version>2.8</version>
-        			<configuration>
-        				<artifactItems>
-        					<artifactItem>
-        						  <groupId>mysql</groupId>
-								  <artifactId>mysql-connector-java</artifactId>
-								  <version>5.1.30</version>
-        					</artifactItem>
-        				</artifactItems>
-        			</configuration>
-				</plugin> -->
-				<plugin>
-				  <groupId>org.apache.tomcat.maven</groupId>
-				  <artifactId>tomcat7-maven-plugin</artifactId>
-				  <version>2.1</version>
-				  
-				  <configuration>
-				  	<!-- <detail>true</detail>
-				  	
-				    <path>/${project.build.finalName}</path>
-				    <port>8080</port>
-				    <contextReloadable>true</contextReloadable>
-					<configurationDir>${project.build.directory}/tomcat</configurationDir>
-					
-					<tomcatConfigurationFilesDirectory>${basedir}/src/main/webapp/META-INF</tomcatConfigurationFilesDirectory>
-					
-					<tomcatConfigurationFilesDirectory>src/main/tomcat/conf</tomcatConfigurationFilesDirectory>
-					<additionalClasspathDirs>src/main/tomcat/lib</additionalClasspathDirs> -->
-					
-				    <!--  <tomcatLoggingFile>${basedir}/src/main/tomcatconf/logging.properties</tomcatLoggingFile>
-				    
-					<serverXml>${basedir}/src/main/tomcatconf/server.xml</serverXml>
-				    
-					<keystoreType>jks</keystoreType>
-					<keystoreFile>${basedir}/src/main/tomcatconf/mykeystore.jks</keystoreFile>
-					<keystorePass>changeit</keystorePass>
-					
-					<enableNaming>true</enableNaming>
-					-->
-					<url>http://localhost:8080/manager/text</url>
-					<path>/securitydemo</path>
-					<username>admin</username>
-        			<password>123456</password>
-				  </configuration>
-				  
-				</plugin>
-				
-				 <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>attach-artifacts</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attach-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>${tomcat.archive.file}</file>
-                                    <type>zip</type>
-                                </artifact>
-                            </artifacts>
-                             <overWriteReleases>false</overWriteReleases>
-          					 <overWriteSnapshots>true</overWriteSnapshots>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            
-            <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.0.2</version>
-          <executions>
-            <execution>
-              <id>copy</id>
-              <phase>package</phase>
-              <goals>
-                <goal>copy</goal>
-              </goals>
-              <configuration>
-                <artifactItems>
-                  <artifactItem>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>tomcat</artifactId>
-                    <version>7.0.77</version>
-                    <type>zip</type>
-                  </artifactItem>
-                </artifactItems>
-                <overWrite>true</overWrite>
-                <outputDirectory>${project.build.directory}/target</outputDirectory>
-                 <overWriteReleases>false</overWriteReleases>
-          		 <overWriteSnapshots>true</overWriteSnapshots>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-				
-			</plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-eclipse-plugin</artifactId>
+                    <version>2.9</version>
+                    <configuration>
+                        <downloadSources>true</downloadSources>
+                        <downloadJavadocs>true</downloadJavadocs>
+                        <wtpversion>2.0</wtpversion>
+                    </configuration>
+                </plugin>
+                <!-- <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.8</version>
+                    <configuration>
+                        <artifactItems>
+                            <artifactItem>
+                                  <groupId>mysql</groupId>
+                                  <artifactId>mysql-connector-java</artifactId>
+                                  <version>5.1.30</version>
+                            </artifactItem>
+                        </artifactItems>
+                    </configuration>
+                </plugin> -->
+                <plugin>
+                    <groupId>org.apache.tomcat.maven</groupId>
+                    <artifactId>tomcat7-maven-plugin</artifactId>
+                    <version>2.1</version>
+
+                    <configuration>
+                        <!-- <detail>true</detail>
+
+                      <path>/${project.build.finalName}</path>
+                      <port>8080</port>
+                      <contextReloadable>true</contextReloadable>
+                      <configurationDir>${project.build.directory}/tomcat</configurationDir>
+
+                      <tomcatConfigurationFilesDirectory>${basedir}/src/main/webapp/META-INF</tomcatConfigurationFilesDirectory>
+
+                      <tomcatConfigurationFilesDirectory>src/main/tomcat/conf</tomcatConfigurationFilesDirectory>
+                      <additionalClasspathDirs>src/main/tomcat/lib</additionalClasspathDirs> -->
+
+                        <!--  <tomcatLoggingFile>${basedir}/src/main/tomcatconf/logging.properties</tomcatLoggingFile>
+
+                        <serverXml>${basedir}/src/main/tomcatconf/server.xml</serverXml>
+
+                        <keystoreType>jks</keystoreType>
+                        <keystoreFile>${basedir}/src/main/tomcatconf/mykeystore.jks</keystoreFile>
+                        <keystorePass>changeit</keystorePass>
+
+                        <enableNaming>true</enableNaming>
+                        -->
+                        <url>http://localhost:8080/manager/text</url>
+                        <path>/securitydemo</path>
+                        <username>admin</username>
+                        <password>123456</password>
+                    </configuration>
+
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.6</version>
+                    <executions>
+                        <execution>
+                            <id>attach-artifacts</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>attach-artifact</goal>
+                            </goals>
+                            <configuration>
+                                <artifacts>
+                                    <artifact>
+                                        <file>${tomcat.archive.file}</file>
+                                        <type>zip</type>
+                                    </artifact>
+                                </artifacts>
+                                <overWriteReleases>false</overWriteReleases>
+                                <overWriteSnapshots>true</overWriteSnapshots>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.0.2</version>
+                    <executions>
+                        <execution>
+                            <id>copy</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy</goal>
+                            </goals>
+                            <configuration>
+                                <artifactItems>
+                                    <artifactItem>
+                                        <groupId>org.apache.tomcat</groupId>
+                                        <artifactId>tomcat</artifactId>
+                                        <version>7.0.77</version>
+                                        <type>zip</type>
+                                    </artifactItem>
+                                </artifactItems>
+                                <overWrite>true</overWrite>
+                                <outputDirectory>${project.build.directory}/target</outputDirectory>
+                                <overWriteReleases>false</overWriteReleases>
+                                <overWriteSnapshots>true</overWriteSnapshots>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+            </plugins>
         </pluginManagement>
-        
+
     </build>
-  
+
 </project>

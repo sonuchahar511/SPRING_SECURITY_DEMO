@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    NOTE: shutdownHook="disable" Shutdown hook in log4j2 conflict with Spring shutdown.
+    Solution: Disable Log4j2 shutdown hook to let spring shutdown hook work
+-->
+
+<Configuration xmlns="http://logging.apache.org/log4j/2.0/config"
+               monitorInterval="10" shutdownHook="disable">
+    <Properties>
+        <!-- properties comes here -->
+    </Properties>
+
+    <Appenders>
+        <Console name="CONSOLE_APPENDER" target="SYSTEM_OUT">
+
+            <PatternLayout
+                    pattern="%highlight{%d [%t:%X{ThreadId}]  %level - %l - %m%n}"
+            />
+
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="CONSOLE_APPENDER"/>
+        </Root>
+
+        <logger level="ALL" additivity="false" name="org.springframework.core.io">
+            <AppenderRef ref="CONSOLE_APPENDER"/>
+        </logger>
+        <logger level="ALL" additivity="false" name="com.chahar.spring.mvc.resolvers">
+            <AppenderRef ref="CONSOLE_APPENDER"/>
+        </logger>
+        <logger level="OFF" additivity="false" name="com.chahar.spring.mvc.interceptors">
+            <AppenderRef ref="CONSOLE_APPENDER"/>
+        </logger>
+
+        <logger level="ALL" additivity="false" name="com.chahar.spring.service.impl.QuickerSpringPropertiesConfigurer">
+            <AppenderRef ref="CONSOLE_APPENDER"/>
+        </logger>
+
+        <logger level="ALL" additivity="false" name="org.springframework.integration">
+            <AppenderRef ref="CONSOLE_APPENDER"/>
+        </logger>
+        <logger level="ALL" additivity="false" name="org.springframework.messaging">
+            <AppenderRef ref="CONSOLE_APPENDER"/>
+        </logger>
+
+
+    </Loggers>
+</Configuration>
