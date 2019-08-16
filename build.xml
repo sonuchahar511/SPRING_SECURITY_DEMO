@@ -73,7 +73,7 @@
 						todir="${PROJECT_TOMCAT_CONF_DIR}/lib" overwrite="true" verbose="true" />
 	</target>-->
 	
-	<target name="prepare_tomcatserver" depends="setup_tomcatserver">
+	<target name="prepare_tomcatserver" depends="setup_tomcatserver,all">
 		
 		<echo message="############### deployinng ${name}.war into tomcat webapps directory" />
 		<copy file="target/${name}.war" todir="${TOMCAT_HOME}/webapps" overwrite="true" verbose="true" />
@@ -96,10 +96,10 @@
 	</target>
 	
 	<target name="serverstart" depends="prepare_tomcatserver" >
-		<!--<exec dir="${TOMCAT_HOME}/bin" executable="bash" >
+		<exec dir="${TOMCAT_HOME}/bin" executable="bash" >
 			<arg value="-c"/>
 			<arg value="chmod u+x catalina.sh"/>
-		</exec>-->
+		</exec>
 		<exec dir="${TOMCAT_HOME}/bin" executable="bash" >
 			<arg value="-c"/>
 			<!--<arg value="./catalina.sh jpda start"/>-->

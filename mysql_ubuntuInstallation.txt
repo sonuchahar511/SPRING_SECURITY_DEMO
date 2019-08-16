@@ -1,0 +1,21 @@
+How to Install mysql:
+    wget -c https://dev.mysql.com/get/mysql-apt-config_0.8.11-1_all.deb
+    sudo dpkg -i mysql-apt-config_0.8.11-1_all.deb
+    sudo apt-get update
+    sudo apt-get install mysql-server
+    sudo service mysql status
+    sudo service mysql stop
+    sudo service mysql start
+
+    if service key error occurred:
+        sudo apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
+
+     create new user:
+        mysql -u root -p
+        CREATE USER 'yash'@'localhost' IDENTIFIED BY 'root1234'
+        GRANT ALL PRIVILEGES ON * . * TO 'yash'@'localhost';
+        FLUSH PRIVILEGES;
+
+
+REFERENCES:
+    https://phoenixnap.com/kb/how-to-install-mysql-on-ubuntu-18-04]
