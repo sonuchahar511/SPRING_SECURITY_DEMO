@@ -61,7 +61,7 @@
 		<copy file="${user.home}/.m2/repository/org/apache/tomcat/tomcat/${tomcat.version}/${tomcat.zip.name}" todir="${deploy.root.dir}" overwrite="true" verbose="true" />
 		<unzip src="deployed/${tomcat.zip.name}" dest="./${deploy.root.dir}" />
 		
-		<sleep seconds="15" />
+		<sleep seconds="1" />
 		<delete file="deployed/${tomcat.zip.name}" verbose="true" />
 
 	</target>
@@ -73,7 +73,7 @@
 						todir="${PROJECT_TOMCAT_CONF_DIR}/lib" overwrite="true" verbose="true" />
 	</target>-->
 	
-	<target name="prepare_tomcatserver" depends="setup_tomcatserver">
+	<target name="prepare_tomcatserver" depends="all,setup_tomcatserver">
 		
 		<echo message="############### deployinng ${name}.war into tomcat webapps directory" />
 		<copy file="target/${name}.war" todir="${TOMCAT_HOME}/webapps" overwrite="true" verbose="true" />
@@ -96,9 +96,14 @@
 	</target>
 	
 	<target name="serverstart" depends="prepare_tomcatserver" >
-		<exec dir="${TOMCAT_HOME}/bin" executable="bash" >
+		<exec dir="${TOMCAT_HOME}/bin" executable="bash">
 			<arg value="-c"/>
-			<arg value="./catalina.sh jpda start"/>
+			<arg value="chmod u+x catalina.sh"/>
+		</exec>
+		<exec dir="${TOMCAT_HOME}/bin" executable="bash">
+			<arg value="-c"/>
+			<!--<arg value="./catalina.sh jpda start"/>-->
+			<arg value="./catalina.sh run"/>
 		</exec>
 	</target>
 

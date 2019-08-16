@@ -2,109 +2,152 @@
 
 <!-- apache-ant-1.9.1 -->
 
-<project default="start_tomcatserver">
-	
-	<property file="build.properties"/>
-	
-	<property name="name" value="securitydemo" />
-	
-	<property name="TOMCAT_HOME" value="${tomcat.deploy.dir}" />
-	<property name="PROJECT_TOMCAT_CONF_DIR" value="src/main/webapp/META-INF" />
-	
-	<target name="check_tomcatserver_dir_check">
+<project xmlns:ac="antlib:net.sf.antcontrib" default="start_tomcatserver">
 
+   <!-- <property file="build.properties"/>
+
+    <property name="name" value="securitydemo"/>
+
+    <property name="TOMCAT_HOME" value="${tomcat.deploy.dir}"/>
+    <property name="PROJECT_TOMCAT_CONF_DIR" value="src/main/webapp/META-INF"/>-->
+	<!--<import file="build_linux.xml" as="nested"/>-->
+
+
+	<!--	<if>
+
+			<equals arg1="${is.Widnow}" arg2="linux" />
+			<condition property="is.Widnow">
+				<os family="windows"/>
+			</condition>
+			<then>
+				<import file="build_window.xml" as="nested"/>
+			</then>
+		</if>-->
+		<condition property="is.Linux">
+			<os family="unix"/>
+		</condition>
+		<ac:if>
+			<equals arg1="${is.Linux}" arg2="true" />
+			<then>
+				<echo message="LINUX OPERATING SYSTEM"/>
+				<include file="build_linux.xml" as="nested"/>
+			</then>
+		</ac:if>
+
+
+
+    <!--<target name="check_tomcatserver_dir_check">
         <condition property="dir.tomcatserver.exists">
-	      <available file="${TOMCAT_HOME}" type="dir" />
-	    </condition>
+            <available file="${TOMCAT_HOME}" type="dir"/>
+        </condition>
 
-		 <condition property="dir.tomcatserver.notexists">
-		    <not>
-		    	<available file="${TOMCAT_HOME}" type="dir" />
-		    </not>
-		  </condition>
+        <condition property="dir.tomcatserver.notexists">
+            <not>
+                <available file="${TOMCAT_HOME}" type="dir"/>
+            </not>
+        </condition>
 
-		  <condition property="mysql.connector.not.present">
-			<not>
-				<available file="${PROJECT_TOMCAT_CONF_DIR}/lib/mysql-connector-java-${mysql.connector.version}.jar" type="file"/>
-			</not>
-		  </condition>
+        <condition property="mysql.connector.not.present">
+            <not>
+                <available file="${PROJECT_TOMCAT_CONF_DIR}/lib/mysql-connector-java-${mysql.connector.version}.jar"
+                           type="file"/>
+            </not>
+        </condition>
+    </target>
 
-	</target>
-	
-	<target name="stop_tomcatserver" depends="check_tomcatserver_dir_check" if="dir.tomcatserver.exists">
-		<exec dir="${TOMCAT_HOME}/bin" executable="bin/sh" >
-			<arg value="-c"/>
-			<arg value="catalina.sh stop"/>
-		</exec>
-		<sleep seconds="2" /> <!-- Give time to tomcat for shutdown gracefully/properly -->
-	</target>
-	
-	<target name="clean" depends="stop_tomcatserver">
-		<delete dir="target" verbose="true" />
-		<mkdir dir="target"/>
 
-		<delete dir="${TOMCAT_HOME}/webapps/${name}" verbose="true" />
-		<delete file="${TOMCAT_HOME}/webapps/${name}.war" verbose="true" />
-	</target>
-	
-	<target name="all">
-		<exec dir="." executable="bash" >
-			<arg value="-c"/>
-			<arg value="mvn clean install"/>
-		</exec>
-	</target>
-	
-	<target name="setup_tomcatserver" depends="check_tomcatserver_dir_check" if="dir.tomcatserver.notexists">
-		<property name="tomcat.zip.name" value="tomcat-7.0.77.zip" />
+    <target name="stop_tomcatserver" depends="check_tomcatserver_dir_check" if="dir.tomcatserver.exists">
+        <exec dir="${TOMCAT_HOME}/bin" executable="bin/sh">
+            <arg value="-c"/>
+            <arg value="catalina.sh stop"/>
+        </exec>
+        <sleep seconds="2"/> &lt;!&ndash; Give time to tomcat for shutdown gracefully/properly &ndash;&gt;
+    </target>
 
-		<echo message="FIX ME: this task should execute once while setup project first time. work=downloaded+extract zip " />
-		<copy file="${user.home}/.m2/repository/org/apache/tomcat/tomcat/${tomcat.version}/${tomcat.zip.name}" todir="${deploy.root.dir}" overwrite="true" verbose="true" />
-		<unzip src="deployed/${tomcat.zip.name}" dest="./${deploy.root.dir}" />
-		
-		<sleep seconds="15" />
-		<delete file="deployed/${tomcat.zip.name}" verbose="true" />
+    <target name="clean" depends="stop_tomcatserver">
+        <delete dir="target" verbose="true"/>
+        <mkdir dir="target"/>
 
-	</target>
-	
-	<!--<target name="prepare_project_tomcatserver_conf" depends="setup_tomcatserver" if="mysql.connector.not.present">
-		<echo message="############### Copying mysql connector jar into project tomcat/lib directory" />
-			
-		<copy file="${user.home}/.m2/repository/mysql/mysql-connector-java/${mysql.connector.version}/mysql-connector-java-${mysql.connector.version}.jar"
-						todir="${PROJECT_TOMCAT_CONF_DIR}/lib" overwrite="true" verbose="true" />
-	</target>-->
-	
-	<target name="prepare_tomcatserver" depends="setup_tomcatserver,all">
-		
-		<echo message="############### deployinng ${name}.war into tomcat webapps directory" />
-		<copy file="target/${name}.war" todir="${TOMCAT_HOME}/webapps" overwrite="true" verbose="true" />
-		
-		<echo message="############### deploying tomcat configuratin file into tomcat conf directory" />
+        <delete dir="${TOMCAT_HOME}/webapps/${name}" verbose="true"/>
+        <delete file="${TOMCAT_HOME}/webapps/${name}.war" verbose="true"/>
+    </target>
 
-		<copy file="${user.home}/.m2/repository/org/apache/tomcat/tomcat/${tomcat.version}/tomcat-${tomcat.version}.zip"
-				todir="${deploy.root.dir}" overwrite="true" verbose="true" />
-		
-		<copy file="${PROJECT_TOMCAT_CONF_DIR}/catalina.properties" todir="${TOMCAT_HOME}/conf"  overwrite="true" verbose="true" />
-		<copy file="${PROJECT_TOMCAT_CONF_DIR}/local.properties" todir="${TOMCAT_HOME}/conf"  overwrite="true" verbose="true" />
-		<copy file="${PROJECT_TOMCAT_CONF_DIR}/context.xml" todir="${TOMCAT_HOME}/conf"  overwrite="true" verbose="true" />
-		<copy file="${PROJECT_TOMCAT_CONF_DIR}/server.xml" todir="${TOMCAT_HOME}/conf"  overwrite="true" verbose="true" />
-		<copy file="${PROJECT_TOMCAT_CONF_DIR}/tomcat-users.xml" todir="${TOMCAT_HOME}/conf"  overwrite="true" verbose="true" />
-		
-		<copy file="${PROJECT_TOMCAT_CONF_DIR}/mykeystore.jks" todir="${TOMCAT_HOME}/conf"  overwrite="true" verbose="true" />
-		
-		<copy file="${user.home}/.m2/repository/mysql/mysql-connector-java/${mysql.connector.version}/mysql-connector-java-${mysql.connector.version}.jar"
-              todir="${TOMCAT_HOME}/lib" overwrite="true" verbose="true" />
-	</target>
-	
-	<target name="serverstart" depends="prepare_tomcatserver" >
-		<exec dir="${TOMCAT_HOME}/bin" executable="bash" >
-			<arg value="-c"/>
-			<arg value="chmod u+x catalina.sh"/>
-		</exec>
-		<exec dir="${TOMCAT_HOME}/bin" executable="bash" >
-			<arg value="-c"/>
-			<!--<arg value="./catalina.sh jpda start"/>-->
-			<arg value="./catalina.sh run"/>
-		</exec>
+    <target name="all">
+        <exec dir="." executable="bash">
+            <arg value="-c"/>
+            <arg value="mvn clean install"/>
+        </exec>
+    </target>
+
+    <target name="setup_tomcatserver" depends="check_tomcatserver_dir_check" if="dir.tomcatserver.notexists">
+        <property name="tomcat.zip.name" value="tomcat-7.0.77.zip"/>
+
+        <echo message="FIX ME: this task should execute once while setup project first time. work=downloaded+extract zip "/>
+        <copy file="${user.home}/.m2/repository/org/apache/tomcat/tomcat/${tomcat.version}/${tomcat.zip.name}"
+              todir="${deploy.root.dir}" overwrite="true" verbose="true"/>
+        <unzip src="deployed/${tomcat.zip.name}" dest="./${deploy.root.dir}"/>
+
+        <sleep seconds="1"/>
+        <delete file="deployed/${tomcat.zip.name}" verbose="true"/>
+
+    </target>
+
+    &lt;!&ndash;<target name="prepare_project_tomcatserver_conf" depends="setup_tomcatserver" if="mysql.connector.not.present">
+        <echo message="############### Copying mysql connector jar into project tomcat/lib directory" />
+
+        <copy file="${user.home}/.m2/repository/mysql/mysql-connector-java/${mysql.connector.version}/mysql-connector-java-${mysql.connector.version}.jar"
+                        todir="${PROJECT_TOMCAT_CONF_DIR}/lib" overwrite="true" verbose="true" />
+    </target>&ndash;&gt;
+
+    <target name="prepare_tomcatserver" depends="setup_tomcatserver,all">
+
+        <echo message="############### deployinng ${name}.war into tomcat webapps directory"/>
+        <copy file="target/${name}.war" todir="${TOMCAT_HOME}/webapps" overwrite="true" verbose="true"/>
+
+        <echo message="############### deploying tomcat configuratin file into tomcat conf directory"/>
+
+        &lt;!&ndash;<copy file="${user.home}/.m2/repository/org/apache/tomcat/tomcat/${tomcat.version}/tomcat-${tomcat.version}.zip"
+                todir="${deploy.root.dir}" overwrite="true" verbose="true" />&ndash;&gt;
+
+        <copy file="${PROJECT_TOMCAT_CONF_DIR}/catalina.properties" todir="${TOMCAT_HOME}/conf" overwrite="true"
+              verbose="true"/>
+        <copy file="${PROJECT_TOMCAT_CONF_DIR}/local.properties" todir="${TOMCAT_HOME}/conf" overwrite="true"
+              verbose="true"/>
+        <copy file="${PROJECT_TOMCAT_CONF_DIR}/context.xml" todir="${TOMCAT_HOME}/conf" overwrite="true"
+              verbose="true"/>
+        <copy file="${PROJECT_TOMCAT_CONF_DIR}/server.xml" todir="${TOMCAT_HOME}/conf" overwrite="true" verbose="true"/>
+        <copy file="${PROJECT_TOMCAT_CONF_DIR}/tomcat-users.xml" todir="${TOMCAT_HOME}/conf" overwrite="true"
+              verbose="true"/>
+
+        <copy file="${PROJECT_TOMCAT_CONF_DIR}/mykeystore.jks" todir="${TOMCAT_HOME}/conf" overwrite="true"
+              verbose="true"/>
+
+        <copy file="${user.home}/.m2/repository/mysql/mysql-connector-java/${mysql.connector.version}/mysql-connector-java-${mysql.connector.version}.jar"
+              todir="${TOMCAT_HOME}/lib" overwrite="true" verbose="true"/>
+    </target>-->
+
+ <!--   <target name="check_os">
+        <condition property="is.Linux">
+            <os family="windows"/>
+        </condition>
+    </target>-->
+
+    <!--<target name="serverstart_liux" depends="check_os,prepare_tomcatserver" if="is.Linux">
+        <exec dir="${TOMCAT_HOME}/bin" executable="bash">
+            <arg value="-c"/>
+            <arg value="chmod u+x catalina.sh"/>
+        </exec>
+        <exec dir="${TOMCAT_HOME}/bin" executable="bash">
+            <arg value="-c"/>
+            &lt;!&ndash;<arg value="./catalina.sh jpda start"/>&ndash;&gt;
+            <arg value="./catalina.sh run"/>
+        </exec>
+    </target>-->
+
+    <target name="start_tomcatserver">
+		<!--depends="checkOSType"-->
+		<!--<import file="nested.xml" as="nested"/>-->
+		<antcall target="nested.serverstart" />
 	</target>
 
 </project>	
