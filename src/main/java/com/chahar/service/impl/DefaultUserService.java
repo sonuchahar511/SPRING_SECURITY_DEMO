@@ -144,7 +144,8 @@ public class DefaultUserService implements UserService,UserDetailsService{
 	}
 
 	@Override
-	public List<String> findAllRoles() {
+	public List<String> findAllRoles()
+	{
 		
 		List<Role> roles = null;
 		

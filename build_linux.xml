@@ -32,9 +32,9 @@
 	</target>
 	
 	<target name="stop_tomcatserver" depends="check_tomcatserver_dir_check" if="dir.tomcatserver.exists">
-		<exec dir="${TOMCAT_HOME}/bin" executable="bin/sh" >
+		<exec dir="${TOMCAT_HOME}/bin" executable="bash" >
 			<arg value="-c"/>
-			<arg value="catalina.sh stop"/>
+			<arg value="./catalina.sh stop"/>
 		</exec>
 		<sleep seconds="2" /> <!-- Give time to tomcat for shutdown gracefully/properly -->
 	</target>
@@ -52,9 +52,10 @@
 			<arg value="-c"/>
 			<arg value="mvn clean install"/>
 		</exec>
+
 	</target>
 	
-	<target name="setup_tomcatserver" if="dir.tomcatserver.notexists">
+	<target name="setup_tomcatserver" depends="check_tomcatserver_dir_check" if="dir.tomcatserver.notexists">
 		<property name="tomcat.zip.name" value="tomcat-7.0.77.zip" />
 
 		<echo message="FIX ME: this task should execute once while setup project first time. work=downloaded+extract zip " />
@@ -63,20 +64,19 @@
 		
 		<sleep seconds="1" />
 		<delete file="deployed/${tomcat.zip.name}" verbose="true" />
-
 	</target>
-	
-	<!--<target name="prepare_project_tomcatserver_conf" depends="setup_tomcatserver" if="mysql.connector.not.present">
-		<echo message="############### Copying mysql connector jar into project tomcat/lib directory" />
-			
-		<copy file="${user.home}/.m2/repository/mysql/mysql-connector-java/${mysql.connector.version}/mysql-connector-java-${mysql.connector.version}.jar"
-						todir="${PROJECT_TOMCAT_CONF_DIR}/lib" overwrite="true" verbose="true" />
-	</target>-->
+
+	<target name="deploy_war" depends="all,check_tomcatserver_dir_check" if="dir.tomcatserver.exists">
+		<echo message="############### deployinng ${name}.war into tomcat webapps directory" />
+		<delete includeEmptyDirs="true">
+			<fileset dir="${TOMCAT_HOME}/webapps/${name}"/>
+		</delete>
+		<copy file="target/${name}.war" todir="${TOMCAT_HOME}/webapps" overwrite="true" verbose="true" />
+	</target>
+
 	
 	<target name="prepare_tomcatserver" depends="all,setup_tomcatserver">
-		
-		<echo message="############### deployinng ${name}.war into tomcat webapps directory" />
-		<copy file="target/${name}.war" todir="${TOMCAT_HOME}/webapps" overwrite="true" verbose="true" />
+
 		
 		<echo message="############### deploying tomcat configuratin file into tomcat conf directory" />
 
@@ -93,17 +93,19 @@
 		
 		<copy file="${user.home}/.m2/repository/mysql/mysql-connector-java/${mysql.connector.version}/mysql-connector-java-${mysql.connector.version}.jar"
               todir="${TOMCAT_HOME}/lib" overwrite="true" verbose="true" />
+
+		<echo message="############### deployinng ${name}.war into tomcat webapps directory" />
+		<copy file="target/${name}.war" todir="${TOMCAT_HOME}/webapps" overwrite="true" verbose="true" />
 	</target>
 	
-	<target name="serverstart" depends="prepare_tomcatserver" >
+	<target name="serverstart" depends="deploy_war,prepare_tomcatserver" >
 		<exec dir="${TOMCAT_HOME}/bin" executable="bash">
 			<arg value="-c"/>
 			<arg value="chmod u+x catalina.sh"/>
 		</exec>
 		<exec dir="${TOMCAT_HOME}/bin" executable="bash">
 			<arg value="-c"/>
-			<!--<arg value="./catalina.sh jpda start"/>-->
-			<arg value="./catalina.sh run"/>
+			<arg value="./catalina.sh jpda run"/>
 		</exec>
 	</target>
 

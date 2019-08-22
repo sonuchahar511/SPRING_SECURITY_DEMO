@@ -73,6 +73,7 @@
  	 <bean id="myMethodSecuritySecurityHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
  	 	<property name="permissionEvaluator" ref="myPermissionEvaluator" />
  	 </bean>	
- 	 <bean id="myPermissionEvaluator" class="com.chahar.web.handler.CustomPermissionEvaluator"/>	
- 	 
+ 	 <bean id="myPermissionEvaluator" class="com.chahar.web.handler.CustomPermissionEvaluator"/>
+
+	<!--<bean id="myUsernamePasswordAuthenticationFilter" class="com.chahar.web.filter.CustomUsernamePasswordAuthenticationFilter2"/>-->
 </beans>

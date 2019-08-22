@@ -39,7 +39,7 @@
 		=============================================================<br>
 		
 		<br>this is custom login form <br>
-		<form name="loginForm" action="${loginSubmitUrl}" method="POST">
+		<form name="loginForm" action="${loginSubmitUrl}" method="GET">
 			<table>
 				<tr>
 					<td>User:</td>

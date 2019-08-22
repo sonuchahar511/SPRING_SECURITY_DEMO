@@ -4,7 +4,7 @@
 
 <project xmlns:ac="antlib:net.sf.antcontrib" default="start_tomcatserver">
 
-   <!-- <property file="build.properties"/>
+	<!-- <property file="build.properties"/>
 
     <property name="name" value="securitydemo"/>
 
@@ -23,20 +23,19 @@
 				<import file="build_window.xml" as="nested"/>
 			</then>
 		</if>-->
-		<condition property="is.Linux">
-			<os family="unix"/>
-		</condition>
-		<ac:if>
-			<equals arg1="${is.Linux}" arg2="true" />
-			<then>
-				<echo message="LINUX OPERATING SYSTEM"/>
-				<include file="build_linux.xml" as="nested"/>
-			</then>
-		</ac:if>
+	<condition property="is.Linux">
+		<os family="unix"/>
+	</condition>
+	<ac:if>
+		<equals arg1="${is.Linux}" arg2="true"/>
+		<then>
+			<echo message="Detected LINUX OPERATING SYSTEM so picking file [build_linux.xml]"/>
+			<include file="build_linux.xml" as="nested"/>
+		</then>
+	</ac:if>
 
 
-
-    <!--<target name="check_tomcatserver_dir_check">
+	<!--<target name="check_tomcatserver_dir_check">
         <condition property="dir.tomcatserver.exists">
             <available file="${TOMCAT_HOME}" type="dir"/>
         </condition>
@@ -126,13 +125,13 @@
               todir="${TOMCAT_HOME}/lib" overwrite="true" verbose="true"/>
     </target>-->
 
- <!--   <target name="check_os">
+	<!--   <target name="check_os">
         <condition property="is.Linux">
             <os family="windows"/>
         </condition>
     </target>-->
 
-    <!--<target name="serverstart_liux" depends="check_os,prepare_tomcatserver" if="is.Linux">
+	<!--<target name="serverstart_liux" depends="check_os,prepare_tomcatserver" if="is.Linux">
         <exec dir="${TOMCAT_HOME}/bin" executable="bash">
             <arg value="-c"/>
             <arg value="chmod u+x catalina.sh"/>
@@ -144,10 +143,16 @@
         </exec>
     </target>-->
 
-    <target name="start_tomcatserver">
+	<target name="start_tomcatserver">
 		<!--depends="checkOSType"-->
 		<!--<import file="nested.xml" as="nested"/>-->
-		<antcall target="nested.serverstart" />
+		<antcall target="nested.serverstart"/>
+	</target>
+
+	<target name="stop_tomcatserver">
+		<!--depends="checkOSType"-->
+		<!--<import file="nested.xml" as="nested"/>-->
+		<antcall target="nested.stop_tomcatserver"/>
 	</target>
 
 </project>	

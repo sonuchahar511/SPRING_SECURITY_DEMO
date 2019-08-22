@@ -44,7 +44,7 @@ public class HomeController extends AbstractPageController{
 		 return CmsPages.HOME_PAGE;
 	 }
 	
-	 @RequestMapping(value=CmsPages.MYLOGIN_PAGE, method = RequestMethod.GET)
+	 @RequestMapping(value=CmsPages.MYLOGIN_PAGE, method = {RequestMethod.GET,RequestMethod.POST})
 	 public ModelAndView getUserLoginPage(final HttpServletRequest request,final HttpServletResponse response , 
 			 @RequestParam(value = "error", required = false) String error,
 			 @RequestParam(value = "logout", required = false) String logout) {
@@ -78,11 +78,11 @@ public class HomeController extends AbstractPageController{
 	@RequestMapping(value="/mylogout", method = RequestMethod.GET)
 	public String logoutPageGet(HttpServletRequest request, HttpServletResponse response) {
 		LOGGER.info(getPrincipal()+": mylogout with GET called");
-		
-		doLogoutAction(request,response);
-		
+
 		Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
 		new CookieClearingLogoutHandler(TO_BE_DELETE_COOKIES).logout(request, response, currentAuthentication);
+
+		doLogoutAction(request,response);
 		
 	    return REDIRECT_PREFIX+CmsPages.HOME_PAGE;
 	}
@@ -90,11 +90,11 @@ public class HomeController extends AbstractPageController{
 	@RequestMapping(value="/mylogout", method = RequestMethod.POST)
 	public String logoutPagePost(HttpServletRequest request, HttpServletResponse response) {
 		LOGGER.info(getPrincipal()+": mylogout with Post called");
-		
-		doLogoutAction(request,response);
-		
+
 		Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
 		new CookieClearingLogoutHandler(TO_BE_DELETE_COOKIES).logout(request, response, currentAuthentication);
+
+		doLogoutAction(request,response);
 		
 	    return REDIRECT_PREFIX+CmsPages.HOME_PAGE;
 	}

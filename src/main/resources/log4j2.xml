@@ -22,11 +22,11 @@
     </Appenders>
 
     <Loggers>
-        <Root level="INFO">
+        <Root level="ERROR">
             <AppenderRef ref="CONSOLE_APPENDER"/>
         </Root>
 
-        <logger level="ALL" additivity="false" name="org.springframework.core.io">
+        <!--<logger level="ALL" additivity="false" name="org.springframework.core.io">
             <AppenderRef ref="CONSOLE_APPENDER"/>
         </logger>
         <logger level="ALL" additivity="false" name="com.chahar.spring.mvc.resolvers">
@@ -44,6 +44,9 @@
             <AppenderRef ref="CONSOLE_APPENDER"/>
         </logger>
         <logger level="ALL" additivity="false" name="org.springframework.messaging">
+            <AppenderRef ref="CONSOLE_APPENDER"/>
+        </logger>-->
+        <logger level="DEBUG" additivity="false" name="org.springframework.security">
             <AppenderRef ref="CONSOLE_APPENDER"/>
         </logger>
 
