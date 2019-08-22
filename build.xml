@@ -154,5 +154,11 @@
 		<!--<import file="nested.xml" as="nested"/>-->
 		<antcall target="nested.stop_tomcatserver"/>
 	</target>
+	<target name="restart_tomcatserver">
+		<!--depends="checkOSType"-->
+		<!--<import file="nested.xml" as="nested"/>-->
+		<antcall target="nested.stop_tomcatserver"/>
+		<antcall target="nested.serverstart"/>
+	</target>
 
 </project>	

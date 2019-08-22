@@ -1,3 +1,14 @@
+log4j log level hierarchy:
+    ALL
+        TRACE
+            DEBUG
+                INFO
+                    WARN
+                        ERROR
+                            FATAL
+                                OFF
+    ===================================
+
 Filter Ordering:
     MultipartFilter
         HiddenHttpMethodFilter

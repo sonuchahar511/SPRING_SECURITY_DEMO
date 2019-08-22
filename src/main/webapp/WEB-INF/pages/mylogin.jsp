@@ -39,7 +39,7 @@
 		=============================================================<br>
 		
 		<br>this is custom login form <br>
-		<form name="loginForm" action="${loginSubmitUrl}" method="GET">
+		<form name="loginForm" action="${loginSubmitUrl}" method="POST">
 			<table>
 				<tr>
 					<td>User:</td>
@@ -54,8 +54,10 @@
 				</tr>
 				<tr>
 					 <td colspan="2">
-					 	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+					 	<!-- <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> -->
+					 	 <input type="hidden"  name="${_csrf.parameterName}"   value="${_csrf.token}"/>
 					 </td>
+
 				</tr>
 				<tr>
 					<td colspan='2'><input name="submit" type="submit" value="submit" /></td>

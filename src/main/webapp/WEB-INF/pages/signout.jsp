@@ -30,6 +30,7 @@ context=${context}
 			</form>
 			<br>
 			<form method="POST" action="${logoutFilterUrl}">
+			    <input type="hidden"  name="${_csrf.parameterName}"   value="${_csrf.token}"/>
 				<button type="submit">Logout via Logout Filter(logout+POST)</button>
 			</form>
 			<button type="button" onclick="logoutBasicAuthentication('${authenticationLogoutUrl}','${homePageUrl}')">Logout for Basic/Digest Authentication</button><br>
@@ -37,13 +38,13 @@ context=${context}
 		
 		<script type="text/javascript">
 				function logoutBasicAuthentication(url,homePageUrl) {
-					//(url);
-					//alert(homePageUrl);
+					alert(url);
+					alert(homePageUrl);
 					
 				    var xmlhttp = new XMLHttpRequest();
 				    
 				    xmlhttp.onreadystatechange = function() {
-				        if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+				        if (xmlhttp.readyState == 4 ) {
 				           if (xmlhttp.status == 200) {
 				               //document.getElementById("myDiv").innerHTML = xmlhttp.responseText;
 				           }
