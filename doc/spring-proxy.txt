@@ -1,0 +1,5 @@
+https://springframework.guru/gang-of-four-design-patterns/proxy-pattern/
+
+https://spring.io/blog/2012/05/23/transactions-caching-and-aop-understanding-proxy-usage-in-spring
+
+https://docs.spring.io/spring/docs/3.0.0.M3/reference/html/ch08s06.html

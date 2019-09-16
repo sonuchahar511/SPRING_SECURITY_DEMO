@@ -36,6 +36,8 @@ public class HomeController extends AbstractPageController{
 		AUTHORIZATIONS.add("BASIC");
 		AUTHORIZATIONS.add("DIGEST");
 	}
+
+	static
 	
 	@RequestMapping(value=CmsPages.HOME_PAGE)
 	 public final String welcomePage() {
