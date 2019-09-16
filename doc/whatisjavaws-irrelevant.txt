@@ -1,0 +1,28 @@
+References:
+    AWT/Swing application...
+
+The Java Web Start software allows you to download and run Java applications from the web
+
+The Java Web Start software is launched automatically, when a Java application using Java Web Start
+technology is downloaded for the first time. The Java Web Start software caches the entire
+application locally on your computer.
+
+Java Web Start is an implementation of the Java Network Launching Protocol (JNLP) specification.
+Java Web Start works by using a special file called the JNLP descriptor, which is a small XML
+document that contains elements and attributes that tell Java Web Start how to run the application.
+That JNLP file instructs Java Web Start software to download, cache, and run the application.
+
+In order to create and deploy an application, we must undergo the following steps:
+
+Create a simple application and package it into a .jar file.
+Sign the newly created .jar file.
+Create the .jnlp file of our application.
+Place all files inside a Web Server, such as Apache Tomcat 7.
+Access, download and execute our created .jar file from the web.
+
+    create jar
+        jar -cf JNLPExample.jar *.*
+
+    create a keystore and sign our executable .jar file with it
+        keytool -genkey -keystore testkeys -alias stathis
+        jarsigner -keystore testkeys JNLPExample.jar stathis
