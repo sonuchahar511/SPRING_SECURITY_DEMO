@@ -17,7 +17,6 @@
             <PatternLayout
                     pattern="%highlight{%d [%t:%X{ThreadId}]  %level - %l - %m%n}"
             />
-
         </Console>
     </Appenders>
 

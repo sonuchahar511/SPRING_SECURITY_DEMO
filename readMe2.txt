@@ -61,3 +61,15 @@ EDIT:
     I should mention that because javassist and CGLIB use proxy by subclassing,
     that this is the reason you cannot declare final methods or make the class final when using frameworks that rely on this.
     That would stop these libraries from allowing to subclass your class and override your methods.
+
+
+
+
+
+
+
+
+
+
+REFERENCES:
+    https://docs.oracle.com/cd/E19798-01/821-1841/bncbq/index.html

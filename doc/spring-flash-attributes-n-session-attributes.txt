@@ -1,0 +1,79 @@
+send data(object) from one controller to another controller- by using flash attributes, @SessionAttributes
+
+@RequestMapping(method = RequestMethod.POST)
+public String handleFormSubmission(..., final RedirectAttributes redirectAttrs) {
+    ...
+    redirectAttrs.addFlashAttribute("AttributeName", value);
+    return "redirect:to_some_url_handled_by_BController";
+}
+
+@Controller
+...
+@SessionAttributes("AttributeName")
+public class SearchCriteriaHandler {
+    ...
+    @RequestMapping(method = RequestMethod.GET)
+    public void handleGetRequest(@ModelAttribute("AttributeName") final SomeType value) {
+        ...
+    }
+    ...
+}
+
+16.6 Using flash attributes
+Flash attributes provide a way for one request to store attributes intended for use in another. This is most commonly needed when redirecting — for example, the Post/Redirect/Get pattern. Flash attributes are saved temporarily before the redirect (typically in the session) to be made available to the request after the redirect and removed immediately.
+
+Spring MVC has two main abstractions in support of flash attributes. FlashMap is used to hold flash attributes while FlashMapManager is used to store, retrieve, and manage FlashMap instances.
+
+Flash attribute support is always "on" and does not need to enabled explicitly although if not used, it never causes HTTP session creation. On each request there is an "input" FlashMap with attributes passed from a previous request (if any) and an "output" FlashMap with attributes to save for a subsequent request. Both FlashMap instances are accessible from anywhere in Spring MVC through static methods in RequestContextUtils.
+
+Annotated controllers typically do not need to work with FlashMap directly. Instead an @RequestMapping method can accept an argument of type RedirectAttributes and use it to add flash attributes for a redirect scenario. Flash attributes added via RedirectAttributes are automatically propagated to the "output" FlashMap. Similarly after the redirect attributes from the "input" FlashMap are automatically added to the Model of the controller serving the target URL.  
+
+
+
+@SessionAttributes annotation are used on the class level to :
+
+Mark a model attribute should be persisted to HttpSession after handler methods are executed
+Populate your model with previously saved object from HttpSession before handler methods are executed -- if one do exists
+So you can use it alongside your @ModelAttribute annotation like in this example:
+
+@Controller
+@RequestMapping("/counter")
+@SessionAttributes("mycounter")
+public class CounterController {
+
+  // Checks if there's a model attribute 'mycounter', if not create a new one.
+  // Since 'mycounter' is labelled as session attribute it will be persisted to
+  // HttpSession
+  @RequestMapping(method = GET)
+  public String get(Model model) {
+    if(!model.containsAttribute("mycounter")) {
+      model.addAttribute("mycounter", new MyCounter(0));
+    }
+    return "counter";
+  }
+
+  // Obtain 'mycounter' object for this user's session and increment it
+  @RequestMapping(method = POST)
+  public String post(@ModelAttribute("mycounter") MyCounter myCounter) {
+    myCounter.increment();
+    return "redirect:/counter";
+  }
+}
+Also don't forget common noobie pitfall: make sure you make your session objects Serializable.
+
+
+
+
+
+references:
+	https://www.baeldung.com/spring-mvc-session-attributes
+	https://www.concretepage.com/spring/spring-mvc/spring-mvc-sessionattributes-cookievalue-annotation-example
+
+	https://www.boraji.com/spring-mvc-4-sessionattributes-example--    spring boot custom urlmapping mvcInitializer..
+	https://www.intertech.com/Blog/understanding-spring-mvc-model-and-session-attributes/
+
+TODO: What is ControllerAdvice? working poc
+TODO: ErrorHandling.. in mvc and in boot as well
+TODO: Validation- in mvc -- jsp form class validation and hibernate validation working poc.
+TODO: DONE ||  ThemeResolver , LocaleResolver
+TODO:
