@@ -1,0 +1,73 @@
+
+Set root password:
+	sudo passwd root
+
+install google-chrome:
+	download .deb package and open with Software-install
+
+create blank document option in right click menu:
+	create blank document via touch command terminal.
+
+update-locale:
+	sudo localectl set-locale LANG=en_IN.UTF-8
+
+create desktop shortcut:
+	sudo apt-get install --no-install-recommends gnome-panel
+	gnome-desktop-item-edit ~/Desktop/ --create-new
+
+install wine:
+	sudo apt install wine64
+
+terminal command:
+	sudo apt-get update
+	sudo apt-get autoremove
+	history
+	grep
+	ls -ltr
+
+
+install anydesk:
+	wget https://download.anydesk.com/linux/anydesk_4.0.1-1_amd64.deb
+	sudo dpkg -i anydesk_4.0.1-1_amd64.deb
+	sudo apt-get --fix-broken install
+
+install jenkins:
+	url: https://www.serverlab.ca/tutorials/linux/administration-linux/how-to-install-jenkins-on-ubuntu-18-04-bionic-beaver/
+
+	wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+	sudo apt-add-repository "deb https://pkg.jenkins.io/debian-stable binary/"
+	sudo apt install jenkins
+	sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+	sudo systemctl start jenkins
+	sudo systemctl stop jenkins
+	sudo systemctl status jenkins
+	sudo service jenkins restart
+
+	now access jenkins from browser:
+		192.168.10.215:8080
+	setup new user.
+	can change port also.
+		/etc/default/jenkins and change port.
+		
+
+	sudo ufw allow 7153
+	sudo ufw allow OpenSSH
+	sudo ufw status
+
+	if ssh profile not found:
+		sudo apt-get install ssh
+
+
+	http://192.168.10.215:7153/
+	principal	: jenkins1
+	credentials	: root@12345	
+
+install maven:
+	sudo apt-get install maven
+install ant:
+	sudo apt install ant
+
+
+
+  

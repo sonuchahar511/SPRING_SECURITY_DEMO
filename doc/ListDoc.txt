@@ -1,0 +1,513 @@
+List is one of common collections in Java. Here we are going to discuss about list and how it works internally in java.
+1. List/ArrayList/LinkedList
+A List is an ordered Collection. Lists may contain duplicate elements. In addition to the operations inherited from Collection, the list interface includes operations for the following:
+ 
+ 
+    • Positional access (random access): manipulates elements based on their numerical position in the list. This includes methods such as get, set, add, addAll, and remove.
+    • Search: searches for a specified object in the list and returns its numerical position. Search methods include indexOfand lastIndexOf.
+    • Iteration: extends Iterator semantics to take advantage of the list’s sequential nature. The listIterator methods provide this behavior.
+    • Range-view: The sublist method performs arbitrary range operations on the list.
+There are two List implementations. ArrayList, which is usually the better-performing implementation, and LinkedListwhich offers better performance under certain circumstances.
+In the example below, an object of ArrayList has been created. The add() method is invoked to add the element to the list. Then, the result are displayed. The question is how add() method works internally to add the elements to the list?
+
+public static void main(String[] args) throws IOException {
+        List<> list = new ArrayList<>();       
+
+        list.add(20);       
+        list.add("Java Code Geeks");
+
+        list.add("ArrayList implementation in java");
+        System.out.println(list);
+
+}
+Output:
+[20, Java Code Geeks, ArrayList implementation in java]
+
+There are two overloaded add() methods in ArrayList class:
+    1. add(Object): adds the element to the end of the list.
+    2. add(int index, Object): adds the element at the specified position in the list.
+Both methods have a similar implementation. So, we are going to look at add(Object) method here.
+2. ArrayList implementation inside Java
+In the ArrayList class in java, the following array is defined to store the elements of the ArrayList.
+private transient Object[] elementData;
+There are two different ways to create an ArrayList object.
+2.1 Create an empty list with initial capacity
+When an object of ArrayList is created without initial capacity, the default constructor of the ArrayList class is invoked. It uses empty array instance to create the new object.
+List<> list = new ArrayList<>();
+the following code is executed:
+private static final Object[] EMPTY_ELEMENTDATA = {}; // empty array instance
+public ArrayList() {
+
+    super();
+    this.elementData = EMPTY_ELEMENTDATA;
+}
+When an object of ArrayList is created with an initial capacity, the ArrayList constructor is invoked to create the array internally.
+List<> list = new ArrayList<>(20);
+and the following code is executed:
+public ArrayList(int initialCapacity) {
+        super();
+
+        if (initialCapacity < 0)
+            throw new IllegalArgumentException("Illegal Capacity: "+ initialCapacity);
+        this.elementData = new Object[initialCapacity];
+    }
+
+The size of the array will be equal to the argument passed in the constructor. Then, size of the array will be 20 in above example
+2.2. Create a non empty list containing the elements of a specified collection.
+An object of ArrayList also can be created based on a specific collection.
+1
+List list = new ArrayList<>(Collection c);
+then, the following code is executed:
+public ArrayList(Collection<? extends E> c) {
+        elementData = c.toArray();
+
+        size = elementData.length;
+        // c.toArray might (incorrectly) not return Object[] (see 6260652)
+
+        if (elementData.getClass() != Object[].class)
+            elementData = Arrays.copyOf(elementData, size, Object[].class);
+}
+The above ArrayList constructor will create an non empty list containing the elements of the collection passed in the constructor.
+2.3. How the size of ArrayList grows dynamically?
+In the add(Object), the capacity of the ArrayList will be checked before adding a new element. Here is the implementation of the add() method.
+public boolean add(E e) {
+        ensureCapacityInternal(size + 1);
+
+        elementData[size++] = e;
+        return true;
+}
+ensureCapacityInternal() determines what is the current size of occupied elements and what is the maximum size of the array. If the size of the current elements (including the new element to be added to the ArrayList) is greater than the maximum size of the array then increase the size of array. But the size of the array can not be increased dynamically. So, what happens internally is, a new Array is created and the old array is copied into the new array. The new capacity of the array will be calculated as below:
+int oldCapacity = elementData.length;
+int newCapacity = oldCapacity + (oldCapacity >> 1);
+
+if (newCapacity - minCapacity < 0)  
+    newCapacity = minCapacity;
+// minCapacity is usually close to size, so this is a win:
+
+elementData = Arrays.copyOf(elementData, newCapacity);
+In the above code, minCapacity is the size of the current elements (including the new element to be added to the ArrayList).
+Tip
+ArrayList uses shallow copy to copy the reference of the object to the new ArrayList instance.
+When an ArrayList instance with no initial capacity is created and is empty, then, the add() method is invoked to add an element to the ArrayList instance, the following code is executed to apply a default size to the array.
+if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
+            minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity);
+}
+In the above code, minCapacity is the size of the current elements (including the new element to be added to the ArrayList). DEFAULT_CAPACITY is 10 in ArrayList class and DEFAULTCAPACITY_EMPTY_ELEMENTDATA is an empty array object.
+3. Runtime performance of ArrayList
+The size, isEmpty, get, set, iterator, and listIterator operations run in constant time O(1). The add operation runs in amortized constant time, that is, adding n elements requires O(n) time. All of the other operations run in linear time. The constant factor is low compared to that for the LinkedList implementation.
+4. Conclusion
+Now that you know how List works internally in Java, you might want to know about the implementation of Set or Mapinside Java and how they work. Because these sort of questions shows that candidate has a good knowledge of Collection. You can checkout these examples:
+
+LinkedList in Java
+Linked List are linear data structures where the elements are not stored in contiguous locations and every element is a separate object with a data part and address part. The elements are linked using pointers and addresses. Each element is known as a node. Due to the dynamicity and ease of insertions and deletions, they are preferred over the arrays. It also has few disadvantages like the nodes cannot be accessed directly instead we need to start from the head and follow through the link to reach to a node we wish to access.
+To store the elements in a linked list we use a doubly linked list which provides a linear data structure and also used to inherit an abstract class and implement list and deque interfaces.
+In Java, LinkedList class implements the list interface. The LinkedList class also consists of various constructors and methods like other java collections.
+Constructors for Java LinkedList:
+    1. LinkedList(): Used to create an empty linked list.
+    2. LinkedList(Collection C): Used to create a ordered list which contains all the elements of a specified collection, as returned by the collection’s iterator.
+
+ArrayList and LinkedList remove() methods in Java with Examples
+List interface in Java (which is implemented by ArrayList and LinkedList) provides two versions of remove method.
+remove(Obejct obj) :
+
+It accepts object to be removed.
+    • Removes the first occurrence of the specified element from given list, if the element is present. If the element is not present, the given list is not changed.
+    • After removing, it shifts subsequent elements(if any) to left and decreases their indexes by 1.
+It throws following exceptions
+ClassCastException – if the type of the specified element is incompatible with this collection
+(optional).
+NullPointerException – if the specified element is null and this collection does not permit
+null elements(optional).
+UnsupportedOperationException – if the remove operation is not supported by this collection
+
+// A Java program to demonstrate working of list remove 
+// when Object to be removed is passed. 
+import java.util.*; 
+  
+public class GFG 
+{ 
+    public static void main(String[] args) 
+    { 
+        // Demonstrating remove on ArrayList 
+        List<String>  myAlist = new ArrayList<String>(); 
+        myAlist.add("Geeks"); 
+        myAlist.add("Practice"); 
+        myAlist.add("Quiz"); 
+        System.out.println("Original ArrayList : " + myAlist); 
+        myAlist.remove("Quiz"); 
+        System.out.println("Modified ArrayList : " + myAlist); 
+  
+        // Demonstrating remove on LinkedList 
+        List<String>  myLlist = new ArrayList<String>(); 
+        myLlist.add("Geeks"); 
+        myLlist.add("Practice"); 
+        myLlist.add("Quiz"); 
+        System.out.println("Original LinkedList : " + myLlist); 
+        myLlist.remove("Quiz"); 
+        System.out.println("Modified LinkedList : " + myLlist); 
+    } 
+} 
+Output:
+Original ArrayList : [Geeks, Practice, Quiz]
+Modified ArrayList : [Geeks, Practice]
+Original LinkedList : [Geeks, Practice, Quiz]
+Modified LinkedList : [Geeks, Practice]
+
+remove(int index) :
+
+It removes the element at given index
+
+
+    • After removing, it shifts subsequent elements(if any) to left and decreases their indexes by 1.
+    • If the list contains int types, then this method is called when an int is passed (Please refer this for details)
+It throws IndexOutOfBoundsException if index is out of bound,
+
+// A Java program to demonstrate working of list remove  
+// when index is passed.  
+import java.util.*;  
+  
+public class GFG  
+{  
+    public static void main(String[] args)  
+    {  
+        // Demonstrating remove on ArrayList  
+        List<String> myAlist = new ArrayList<String>();  
+        myAlist.add("Geeks");  
+        myAlist.add("Practice");  
+        myAlist.add("Quiz");  
+        System.out.println("Original ArrayList : " + myAlist);  
+        myAlist.remove("Quiz");  
+        System.out.println("Modified ArrayList : " + myAlist);  
+  
+        // Demonstrating remove on LinkedList  
+        List<String> myLlist = new ArrayList<String>();  
+        myLlist.add("Geeks");  
+        myLlist.add("Practice");  
+        myLlist.add("Quiz");  
+        System.out.println("Original LinkedList : " + myLlist);  
+        myLlist.remove(2);  
+        System.out.println("Modified LinkedList : " + myLlist);  
+    }  
+}  
+Output:
+Original ArrayList : [Geeks, Practice, Quiz]
+Modified ArrayList : [Geeks, Practice]
+Original LinkedList : [Geeks, Practice, Quiz]
+Modified LinkedList : [Geeks, Practice]
+Important Points:
+    • Note that there is no direct way to remove elements in array as size of array is fixed. So there are no methods like add(), remove(), delete(). But in Collection like ArrayList and Hashset, we have these methods. So it’s better to either convert array to ArrrayList or Use Arraylist from first place when we need these methods.
+    • It is not recommended to use remove() of list interface when iterating over elements. This may lead to ConcurrentModificationException (Refer this for a sample program with this exception). When iterating over elements, it is recommended to use Iterator.remove() method. Please see this for details.
+Fail Fast and Fail Safe Iterators in Java
+In this article, I am going to explain how those collections behave which doesn’t iterate as fail-fast. First of all, there is no term as fail-safe given in many places as Java SE specifications does not use this term. I am using fail safe to segregate between Fail fast and Non fail-fast iterators.
+Concurrent Modification: Concurrent Modification in programming means to modify an object concurrently when another task is already running over it. For example, in Java to modify a collection when another thread is iterating over it. Some Iterator implementations (including those of all the general purpose collection implementations provided by the JRE) may choose to throw ConcurrentModificationException if this behavior is detected.
+Fail Fast And Fail Safe Iterators in Java
+Iterators in java are used to iterate over the Collection objects.Fail-Fast iterators immediately throw ConcurrentModificationException if there is structural modification of the collection. Structural modification means adding, removing or updating any element from collection while a thread is iterating over that collection. Iterator on ArrayList, HashMap classes are some examples of fail-fast Iterator.
+Fail-Safe iterators don’t throw any exceptions if a collection is structurally modified while iterating over it. This is because, they operate on the clone of the collection, not on the original collection and that’s why they are called fail-safe iterators. Iterator on CopyOnWriteArrayList, ConcurrentHashMap classes are examples of fail-safe Iterator.
+
+
+How Fail Fast Iterator works ?
+To know whether the collection is structurally modified or not, fail-fast iterators use an internal flag called modCount which is updated each time a collection is modified.Fail-fast iterators checks the modCount flag whenever it gets the next value (i.e. using next()method), and if it finds that the modCount has been modified after this iterator has been created, it throws ConcurrentModificationException.
+
+// Java code to illustrate 
+// Fail Fast Iterator in Java 
+import java.util.HashMap; 
+import java.util.Iterator; 
+import java.util.Map; 
+  
+public class FailFastExample { 
+    public static void main(String[] args) 
+    { 
+        Map<String, String> cityCode = new HashMap<String, String>(); 
+        cityCode.put("Delhi", "India"); 
+        cityCode.put("Moscow", "Russia"); 
+        cityCode.put("New York", "USA"); 
+  
+        Iterator iterator = cityCode.keySet().iterator(); 
+  
+        while (iterator.hasNext()) { 
+            System.out.println(cityCode.get(iterator.next())); 
+  
+            // adding an element to Map 
+            // exception will be thrown on next call 
+            // of next() method. 
+            cityCode.put("Istanbul", "Turkey"); 
+        } 
+    } 
+} 
+Output :
+India
+Exception in thread "main" java.util.ConcurrentModificationException
+    at java.util.HashMap$HashIterator.nextNode(HashMap.java:1442)
+    at java.util.HashMap$KeyIterator.next(HashMap.java:1466)
+    at FailFastExample.main(FailFastExample.java:18)
+Important points of fail-fast iterators :
+    • These iterators throw ConcurrentModificationException if a collection is modified while iterating over it.
+    • They use original collection to traverse over the elements of the collection.
+    • These iterators don’t require extra memory.
+    • Ex : Iterators returned by ArrayList, Vector, HashMap.
+Note 1(from java-docs): The fail-fast behavior of an iterator cannot be guaranteed as it is, generally speaking, impossible to make any hard guarantees in the presence of unsynchronized concurrent modification. Fail-fast iterators throw ConcurrentModificationException on a best-effort basis. Therefore, it would be wrong to write a program that depended on this exception for its correctness: the fail-fast behavior of iterators should be used only to detect bugs.
+Note 2 : If you remove an element via Iterator remove() method, exception will not be thrown. However, in case of removing via a particular collection remove() method, ConcurrentModificationException will be thrown. Below code snippet will demonstrate this:
+
+// Java code to demonstrate remove 
+// case in Fail-fast iterators 
+  
+import java.util.ArrayList; 
+import java.util.Iterator; 
+  
+public class FailFastExample { 
+    public static void main(String[] args) 
+    { 
+        ArrayList<Integer> al = new ArrayList<>(); 
+        al.add(1); 
+        al.add(2); 
+        al.add(3); 
+        al.add(4); 
+        al.add(5); 
+  
+        Iterator<Integer> itr = al.iterator(); 
+        while (itr.hasNext()) { 
+            if (itr.next() == 2) { 
+                // will not throw Exception 
+                itr.remove(); 
+            } 
+        } 
+  
+        System.out.println(al); 
+  
+        itr = al.iterator(); 
+        while (itr.hasNext()) { 
+            if (itr.next() == 3) { 
+                // will throw Exception on 
+                // next call of next() method 
+                al.remove(3); 
+            } 
+        } 
+    } 
+} 
+Output :
+[1, 3, 4, 5]
+Exception in thread "main" java.util.ConcurrentModificationException
+    at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:901)
+    at java.util.ArrayList$Itr.next(ArrayList.java:851)
+    at FailFastExample.main(FailFastExample.java:28)
+Fail Safe Iterator
+First of all, there is no term as fail-safe given in many places as Java SE specifications does not use this term. I am using this term to demonstrate the difference between Fail Fast and Non-Fail Fast Iterator. These iterators make a copy of the internal collection (object array) and iterates over the copied collection. Any structural modification done to the iterator affects the copied collection, not original collection. So, original collection remains structurally unchanged.
+    • Fail-safe iterators allow modifications of a collection while iterating over it.
+    • These iterators don’t throw any Exception if a collection is modified while iterating over it.
+    • They use copy of original collection to traverse over the elements of the collection.
+    • These iterators require extra memory for cloning of collection. Ex : ConcurrentHashMap, CopyOnWriteArrayList
+Example of Fail Safe Iterator in Java:
+
+
+
+// Java code to illustrate 
+// Fail Safe Iterator in Java 
+import java.util.concurrent.CopyOnWriteArrayList; 
+import java.util.Iterator; 
+  
+class FailSafe { 
+    public static void main(String args[]) 
+    { 
+        CopyOnWriteArrayList<Integer> list 
+            = new CopyOnWriteArrayList<Integer>(new Integer[] { 1, 3, 5, 8 }); 
+        Iterator itr = list.iterator(); 
+        while (itr.hasNext()) { 
+            Integer no = (Integer)itr.next(); 
+            System.out.println(no); 
+            if (no == 8) 
+  
+                // This will not print, 
+                // hence it has created separate copy 
+                list.add(14); 
+        } 
+    } 
+} 
+Output:
+1
+3
+5
+8
+Also, those collections which don’t use fail-fast concept may not necessarily create clone/snapshot of it in memory to avoid ConcurrentModificationException. For example, in case of ConcurrentHashMap, it does not operate on a separate copy although it is not fail-fast. Instead, it has semantics that is described by the official specification as weakly consistent(memory consistency properties in Java). Below code snippet will demonstrate this:
+Example of Fail-Safe Iterator which does not create separate copy
+
+// Java program to illustrate 
+// Fail-Safe Iterator which 
+// does not create separate copy 
+import java.util.concurrent.ConcurrentHashMap; 
+import java.util.Iterator; 
+  
+public class FailSafeItr { 
+    public static void main(String[] args) 
+    { 
+  
+        // Creating a ConcurrentHashMap 
+        ConcurrentHashMap<String, Integer> map 
+            = new ConcurrentHashMap<String, Integer>(); 
+  
+        map.put("ONE", 1); 
+        map.put("TWO", 2); 
+        map.put("THREE", 3); 
+        map.put("FOUR", 4); 
+  
+        // Getting an Iterator from map 
+        Iterator it = map.keySet().iterator(); 
+  
+        while (it.hasNext()) { 
+            String key = (String)it.next(); 
+            System.out.println(key + " : " + map.get(key)); 
+  
+            // This will reflect in iterator. 
+            // Hence, it has not created separate copy 
+            map.put("SEVEN", 7); 
+        } 
+    } 
+} 
+Output
+ONE : 1
+FOUR : 4
+TWO : 2
+THREE : 3
+SEVEN : 7
+Note(from java-docs) : The iterators returned by ConcurrentHashMap is weakly consistent. This means that this iterator can tolerate concurrent modification, traverses elements as they existed when iterator was constructed and may (but not guaranteed to) reflect modifications to the collection after the construction of the iterator.
+Difference between Fail Fast Iterator and Fail Safe Iterator
+The major difference is fail-safe iterator doesn’t throw any Exception, contrary to fail-fast Iterator.This is because they work on a clone of Collection instead of the original collection and that’s why they are called as the fail-safe iterator.
+
+Why does ArrayList not throw ConcurrentModificationException when modified from multiple threads?
+ConcurrentModificationException : This exception may be thrown by methods that have detected concurrent modification of an object when such modification is not permissible.
+Above is ConcurrentModificationException definition from javadoc.
+So I try to test below code:
+final List<String> tickets = new ArrayList<String>(100000);
+for (int i = 0; i < 100000; i++) {
+    tickets.add("ticket NO," + i);
+}
+for (int i = 0; i < 10; i++) {
+    Thread salethread = new Thread() {
+        public void run() {
+            while (tickets.size() > 0) {
+                tickets.remove(0);
+                System.out.println(Thread.currentThread().getId()+"Remove 0");
+            }
+        }
+    };
+    salethread.start();
+}
+The code is simple. 10 threads remove the element from the arraylist object. It is sure that multiple 
+threads access one object. But it runs OK. No exception is thrown. Why?
+
+Iterator vs Foreach In Java
+Background :
+
+Iterator is an interface provided by collection framework to traverse a collection and for a sequential access of items in the collection.
+   
+   // Iterating over collection 'c' using terator
+   for (Iterator i = c.iterator(); i.hasNext(); ) 
+       System.out.println(i.next());
+ 
+For eachloop is meant for traversing items in a collection.
+   // Iterating over collection 'c' using for-each 
+   for (Element e: c)
+       System.out.println(e);
+We read the ‘:’ used in for-each loop as “in”. So loop reads as “for each element e in elements”, here elements is the collection which stores Element type items.
+Note : In Java 8 using lambda expressions we can simply replace for-each loop with
+
+
+
+elements.forEach (e -> System.out.println(e) );
+ 
+ 
+Difference between the two traversals
+
+In for-each loop, we can’t modify collection, it will throw a ConcurrentModificationException on the other hand with iterator we can modify collection.
+Modifying a collection simply means removing an element or changing content of an item stored in the collection. This occurs because for-each loop implicitly creates an iterator but it is not exposed to the user thus we can’t modify the items in the collections.
+When to use which traversal?
+    • If we have to modify collection, we can use Iterator.
+    • While using nested for loops it is better to use for-each loop, consider the below code for better understanding.
+
+// Java program to demonstrate working of nested iterators 
+// may not work as expected and throw exception. 
+import java.util.*; 
+  
+public class Main 
+{ 
+    public static void main(String args[]) 
+    { 
+        // Create a link list which stores integer elements 
+        List<Integer> l = new LinkedList<Integer>(); 
+  
+        // Now add elements to the Link List 
+        l.add(2); 
+        l.add(3); 
+        l.add(4); 
+  
+        // Make another Link List which stores integer elements 
+        List<Integer> s=new LinkedList<Integer>(); 
+        s.add(7); 
+        s.add(8); 
+        s.add(9); 
+  
+        // Iterator to iterate over a Link List 
+        for (Iterator<Integer> itr1=l.iterator(); itr1.hasNext(); ) 
+        { 
+            for (Iterator<Integer> itr2=s.iterator(); itr2.hasNext(); ) 
+            { 
+                if (itr1.next() < itr2.next()) 
+                { 
+                    System.out.println(itr1.next()); 
+                } 
+            } 
+        } 
+    } 
+} 
+Output:
+Exception in thread "main" java.util.NoSuchElementException
+    at java.util.LinkedList$ListItr.next(LinkedList.java:888)
+    at Main.main(Main.java:29)
+The above code throws java.util.NoSuchElementException.
+In the above code we are calling the next() method again and again for itr1 (i.e., for List l). Now we are advancing the iterator without even checking if it has any more elements left in the collection(in the inner loop), thus we are advancing the iterator more than the number of elements in the collection which leads to NoSuchElementException.
+for-each loops are tailor made for nested loops. Replace the iterator code with the below code.
+
+// Java program to demonstrate working of nested for-each 
+import java.util.*; 
+public class Main 
+{ 
+    public static void main(String args[]) 
+    { 
+        // Create a link list which stores integer elements 
+        List<Integer> l=new LinkedList<Integer>(); 
+  
+        // Now add elements to the Link List 
+        l.add(2); 
+        l.add(3); 
+        l.add(4); 
+  
+        // Make another Link List which stores integer elements 
+        List<Integer> s=new LinkedList<Integer>(); 
+        s.add(2); 
+        s.add(4); 
+        s.add(5); 
+        s.add(6); 
+  
+        // Iterator to iterate over a Link List 
+        for (int a:l) 
+        { 
+            for (int b:s) 
+            { 
+                if (a<b) 
+                    System.out.print(a + " "); 
+            } 
+        } 
+    } 
+} 
+Output:
+2 2 2 3 3 3 4 4
+Performance Analysis
+
+
+Traversing a collection using for-each loops or iterators give the same performance. Here, by performance we mean the time complexity of both these traversals.
+If you iterate using the old styled C for loop then we might increase the time complexity drastically.
+// Here l is List ,it can be ArrayList /LinkedList and n is size of the List
+for (i=0;i<n;i++)
+   System.out.println(l.get(i));
+Here if the list l is an ArrayList then we can access it in O(1) time since it is allocated contiguous memory blocks (just like an array) i.e random access is possible. But if the collection is LinkedList, then random access is not possible since it is not allocated contiguous memory blocks, so in order to access a element we will have to traverse the link list till you get to the required index, thus the time taken in worst case to access an element will be O(n).
+Iterator and for-each loop are faster than simple for loop for collections with no random access, while in collections which allows random access there is no performance change with for-each loop/for loop/iterator.
+

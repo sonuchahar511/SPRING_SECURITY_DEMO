@@ -2,3 +2,38 @@ installed server for https.
 security.xml is updated for redirect http->https
 	specified list of url served at http
 	other secured list of url served at https.
+
+
+https://www.javaguides.net/2018/11/spring-mvc-5-spring-data-jpa-hibernate-jsp-mysql-tutorial.html
+
+
+
+https://hellokoding.com/registration-and-login-example-with-spring-security-spring-boot-spring-data-jpa-hsql-jsp/
+
+Generics:
+
+Pair:
+	usecase
+
+Stream:
+	https://www.javacodegeeks.com/2015/07/java-se-8-new-features-tour-processing-collections-with-streams-api.html
+
+	Sequential Stream and Parallel Stream.
+	stream, predicate, filter
+	exception: stream has already been operated upon or closed
+
+Jdk 8 new features:
+	-Map: Sorting map via comparingByKey, comparingByValue.
+
+Groovy Script Integration with Spring:
+https://dzone.com/articles/in-any-incomprehensible-situation-go-scripting
+
+
+oracle adf framework:
+
+
+
+https://dzone.com/articles/guide-ubuntu-server-apache-tomcat-spring-mysql-wor
+
+
+https://www.geeksforgeeks.org/microservices-introduction/
